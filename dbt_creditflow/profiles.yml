@@ -1,0 +1,9 @@
+creditflow:
+  target: dev
+  outputs:
+    dev:
+      type: duckdb
+      path: ../data/warehouse/creditflow.duckdb
+      threads: 4
+      extensions:
+        - httpfs

@@ -1,0 +1,30 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Parse every Python module
+        run: |
+          python -c "import ast, pathlib; roots = ['src', 'rag', 'app', 'tests', 'analysis', 'orchestration']; [ast.parse(p.read_text()) for r in roots for p in pathlib.Path(r).rglob('*.py')]"
+
+      - name: Parse the analytical SQL
+        run: |
+          python -c "import sqlglot, glob; [sqlglot.parse_one(open(f).read(), read='duckdb') for f in glob.glob('analysis/*.sql')]"
+
+      - name: Run the test suite
+        run: pytest tests/ -q
