@@ -3,6 +3,12 @@
 
 DBT_DIR := dbt_creditflow
 
+# dbt and Dagster need protobuf>=5.27; the modelling stack's ortools needs
+# <5.27. They live in separate environments, so the targets below name the
+# interpreter they need rather than relying on whichever venv is active.
+DBT := $(CURDIR)/.venv-dbt/bin/dbt
+DAGSTER := $(CURDIR)/.venv-dbt/bin/dagster
+
 help:
 	@echo "setup     install dependencies"
 	@echo "ingest    raw extracts to Parquet, then register them in DuckDB"
@@ -17,7 +23,9 @@ help:
 
 setup:
 	pip install -r requirements.txt
-	cd $(DBT_DIR) && DBT_PROFILES_DIR=. dbt deps
+	python3.11 -m venv .venv-dbt
+	.venv-dbt/bin/pip install -r requirements-dbt.txt
+	cd $(DBT_DIR) && DBT_PROFILES_DIR=. $(DBT) deps
 
 ingest:
 	python -m src.ingest.lending_club
@@ -25,8 +33,8 @@ ingest:
 	python -m src.ingest.load_warehouse
 
 build:
-	cd $(DBT_DIR) && DBT_PROFILES_DIR=. dbt build
-	cd $(DBT_DIR) && DBT_PROFILES_DIR=. dbt docs generate
+	cd $(DBT_DIR) && DBT_PROFILES_DIR=. $(DBT) build
+	cd $(DBT_DIR) && DBT_PROFILES_DIR=. $(DBT) docs generate
 
 analysis:
 	python -m analysis.run_analysis
@@ -48,7 +56,7 @@ rag:
 	python -m rag.model_memo
 
 app:
-	streamlit run app/main.py
+	PYTHONPATH=$(CURDIR) streamlit run app/main.py
 
 test:
 	pytest tests/ -q

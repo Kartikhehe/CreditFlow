@@ -1,4 +1,5 @@
 .venv/
+.venv-dbt/
 .env
 .local/
 
@@ -11,6 +12,7 @@ data/
 *.png
 
 # The results tree is tracked as structure; its artifacts are regenerated.
+results/governance/*.md
 !results/**/.gitkeep
 !results/README.md
 
@@ -26,6 +28,9 @@ __pycache__/
 target/
 dbt_packages/
 logs/
+
+# Machine-local dbt install id, not project configuration.
+dbt_creditflow/.user.yml
 
 .DS_Store
 .vscode/

@@ -1,0 +1,11 @@
+# Transformation and orchestration environment, installed into .venv-dbt.
+#
+# Kept apart from requirements.txt because dbt-core's generated protobuf code
+# needs protobuf>=5.27, while the modelling environment's ortools pins it below
+# 5.27. With the wrong pair installed, optbinning's CP-SAT solver hangs in
+# Solve() instead of raising, which is near-impossible to diagnose from the
+# symptom. The Makefile targets each use the environment they need.
+dbt-core==1.9.1
+dbt-duckdb==1.9.1
+dagster==1.9.5
+dagster-webserver==1.9.5
