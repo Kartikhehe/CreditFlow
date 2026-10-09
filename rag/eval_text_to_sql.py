@@ -13,6 +13,7 @@ answer.
 """
 from __future__ import annotations
 
+import time
 from dataclasses import dataclass, field
 
 import duckdb
@@ -21,6 +22,20 @@ import pandas as pd
 from rag.sql_guard import UnsafeQueryError
 from rag.text_to_sql import ask
 from src.paths import DUCKDB_PATH, GOVERNANCE, ensure_results_dirs
+
+# A 429 or 503 says nothing about whether the agent wrote correct SQL, so
+# transient transport failures are retried with backoff and the run is paced.
+#
+# Note the free tier also enforces a per-model requests-per-day ceiling, which
+# backoff cannot help with: once it is hit, every remaining case fails and the
+# reported accuracy is meaningless. The benchmark needs more calls than that
+# ceiling allows on one model, so a run that reports a wall of 429s should be
+# rerun against a model whose daily quota is unspent rather than read as a
+# result.
+API_MAX_ATTEMPTS = 3
+API_BACKOFF_SECONDS = 15
+PACE_SECONDS = 2
+TRANSIENT_MARKERS = ("429", "503", "RESOURCE_EXHAUSTED", "UNAVAILABLE")
 
 COMPARISON_TOLERANCE = 4
 ROW_ORDER_SENSITIVE_HINT = "order"
@@ -390,6 +405,26 @@ def results_match(expected: pd.DataFrame, actual: pd.DataFrame) -> bool:
     return True
 
 
+def _is_transient(error: Exception) -> bool:
+    text = str(error)
+    return any(marker in text for marker in TRANSIENT_MARKERS)
+
+
+def _ask_with_retry(question: str):
+    """Ask the agent, retrying only transport failures from the API."""
+    for attempt in range(API_MAX_ATTEMPTS):
+        try:
+            return ask(question)
+        except (UnsafeQueryError, ValueError, RuntimeError):
+            # A refusal or a guardrail rejection is a result, not a failure.
+            raise
+        except Exception as error:
+            if not _is_transient(error) or attempt == API_MAX_ATTEMPTS - 1:
+                raise
+            time.sleep(API_BACKOFF_SECONDS * (attempt + 1))
+    raise RuntimeError("unreachable")
+
+
 def evaluate_case(case: GoldCase, connection: duckdb.DuckDBPyConnection) -> dict[str, object]:
     record: dict[str, object] = {
         "question": case.question,
@@ -399,8 +434,10 @@ def evaluate_case(case: GoldCase, connection: duckdb.DuckDBPyConnection) -> dict
         "detail": "",
     }
 
+
+
     try:
-        _, actual = ask(case.question)
+        _, actual = _ask_with_retry(case.question)
     except (UnsafeQueryError, ValueError, RuntimeError) as error:
         record["correct"] = case.should_refuse
         record["detail"] = "refused: " + str(error)[:160]
@@ -431,7 +468,12 @@ def main() -> None:
 
     connection = duckdb.connect(str(DUCKDB_PATH), read_only=True)
     try:
-        records = [evaluate_case(case, connection) for case in GOLD_CASES]
+        records = []
+        for position, case in enumerate(GOLD_CASES, start=1):
+            records.append(evaluate_case(case, connection))
+            print(f"  {position}/{len(GOLD_CASES)} {case.category}", flush=True)
+            if position < len(GOLD_CASES):
+                time.sleep(PACE_SECONDS)
     finally:
         connection.close()
 

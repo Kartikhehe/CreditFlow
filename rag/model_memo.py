@@ -16,15 +16,21 @@ from __future__ import annotations
 import os
 from pathlib import Path
 
-import anthropic
 import pandas as pd
 from dotenv import load_dotenv
+from google import genai
+from google.genai import types
 
 from rag.retrieve import retrieve
 from src.paths import GOVERNANCE, METRICS, TABLES, ensure_results_dirs
 
-MODEL = "claude-sonnet-4-6"
-MAX_TOKENS = 4000
+MODEL = "gemini-3.6-flash"
+# Seven sections of validation narrative over eight evidence tables does not
+# fit in a smaller budget, and a truncated memo stops mid-sentence rather than
+# failing, so the shortfall is silent. Current Gemini models also spend part of
+# the output allowance on internal reasoning, so this is set well above the
+# length of the finished document.
+MAX_TOKENS = 32000
 
 PASSAGES_PER_TOPIC = 3
 PASSAGE_CHARS = 1200
@@ -131,20 +137,20 @@ Rules:
 def main() -> None:
     ensure_results_dirs()
     load_dotenv()
-    api_key = os.environ.get("ANTHROPIC_API_KEY")
+    api_key = os.environ.get("GEMINI_API_KEY")
     if not api_key:
         raise RuntimeError(
-            "ANTHROPIC_API_KEY is not set. Copy .env.example to .env and add a key."
+            "GEMINI_API_KEY is not set. Copy .env.example to .env and add a key."
         )
 
     prompt = build_prompt(gather_context(), gather_evidence())
-    client = anthropic.Anthropic(api_key=api_key)
-    message = client.messages.create(
+    client = genai.Client(api_key=api_key)
+    response = client.models.generate_content(
         model=MODEL,
-        max_tokens=MAX_TOKENS,
-        messages=[{"role": "user", "content": prompt}],
+        contents=prompt,
+        config=types.GenerateContentConfig(max_output_tokens=MAX_TOKENS),
     )
-    memo = "".join(block.text for block in message.content if block.type == "text")
+    memo = response.text
 
     OUTPUT_PATH.write_text(memo)
     print(f"validation memo written to {OUTPUT_PATH}")

@@ -14,15 +14,16 @@ from __future__ import annotations
 import os
 import re
 
-import anthropic
 import duckdb
 import pandas as pd
 from dotenv import load_dotenv
+from google import genai
+from google.genai import types
 
 from rag.sql_guard import UnsafeQueryError, validate
 from src.paths import DUCKDB_PATH
 
-MODEL = "claude-sonnet-4-6"
+MODEL = "gemini-3.5-flash-lite"
 MAX_TOKENS = 1000
 
 FENCE_PATTERN = re.compile(r"^```(?:sql)?\s*|\s*```$", re.MULTILINE)
@@ -81,21 +82,22 @@ UNANSWERABLE = "UNANSWERABLE"
 def generate_sql(question: str) -> str:
     """Ask the model for a single SELECT answering the question."""
     load_dotenv()
-    api_key = os.environ.get("ANTHROPIC_API_KEY")
+    api_key = os.environ.get("GEMINI_API_KEY")
     if not api_key:
         raise RuntimeError(
-            "ANTHROPIC_API_KEY is not set. Copy .env.example to .env and add a key."
+            "GEMINI_API_KEY is not set. Copy .env.example to .env and add a key."
         )
 
-    client = anthropic.Anthropic(api_key=api_key)
-    message = client.messages.create(
+    client = genai.Client(api_key=api_key)
+    response = client.models.generate_content(
         model=MODEL,
-        max_tokens=MAX_TOKENS,
-        system=SYSTEM_PROMPT,
-        messages=[{"role": "user", "content": question}],
+        contents=question,
+        config=types.GenerateContentConfig(
+            system_instruction=SYSTEM_PROMPT,
+            max_output_tokens=MAX_TOKENS,
+        ),
     )
-    raw = "".join(block.text for block in message.content if block.type == "text")
-    return FENCE_PATTERN.sub("", raw.strip()).strip()
+    return FENCE_PATTERN.sub("", response.text.strip()).strip()
 
 
 def ask(question: str) -> tuple[str, pd.DataFrame]:

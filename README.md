@@ -237,7 +237,7 @@ contains, its schema, and which command produces it.
 
 ```bash
 python3.11 -m venv .venv && source .venv/bin/activate
-cp .env.example .env        # add a FRED key and an Anthropic key
+cp .env.example .env        # add a FRED key and a Gemini key
 make setup
 ```
 
