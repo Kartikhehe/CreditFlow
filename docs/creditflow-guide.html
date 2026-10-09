@@ -798,7 +798,7 @@ footer p{max-width:var(--measure)}
 
 <div class="term">
 <p class="term-name">LLM — Large Language Model</p>
-<p>The technology behind ChatGPT, Claude, and Gemini. A model trained on enormous amounts of text that can read instructions and generate text in response. Here it's used for two jobs: writing SQL queries from English questions, and drafting a regulatory document.</p>
+<p>The technology behind ChatGPT and Gemini. A model trained on enormous amounts of text that can read instructions and generate text in response. Here it's used for two jobs: writing SQL queries from English questions, and drafting a regulatory document.</p>
 </div>
 
 <div class="term">
@@ -1058,7 +1058,7 @@ footer p{max-width:var(--measure)}
 <p class="term-name">Google Gemini (google-genai) — the LLM</p>
 <p><strong>What it is:</strong> Google's large language model, accessed through an API. The project uses <code>gemini-3.5-flash-lite</code> for text-to-SQL and <code>gemini-3.6-flash</code> for the memo, both on the free tier.</p>
 <p><strong>Job here:</strong> Two tasks. Writing SQL from English questions. And drafting the model validation memo from retrieved guidance plus measured metrics.</p>
-<p><strong>Note:</strong> This was originally built against Anthropic's Claude API and swapped to Gemini so it runs on a free key. The code structure is identical — one single-turn text generation call in each place — which is itself a point worth making: the LLM is a swappable component behind a small interface, not the architecture.</p>
+<p><strong>Note:</strong> Each module makes a single-turn text generation call behind a small interface, so the provider is a swappable component rather than part of the architecture. Changing it means editing one model name and one client call per module.</p>
 </div>
 
 <div class="term">
@@ -2090,12 +2090,12 @@ git diff</code></pre>
 <pre><code>git add requirements.txt .env.example README.md rag/text_to_sql.py rag/model_memo.py
 git status</code></pre>
 <p>Review that list once more, then commit:</p>
-<pre><code>git commit -m "Swap LLM provider to Gemini and fix dependency resolution
+<pre><code>git commit -m "Move the copilot to Gemini and fix dependency resolution
 
-Replaces the Anthropic SDK with google-genai so the copilot and memo
-generator run on a free-tier key. Also resolves two pre-existing pin
-conflicts that blocked installation: optbinning 0.19 capped numpy below 2,
-and the newer ortools it pulls caps protobuf below dbt-core's floor."</code></pre>
+Uses google-genai so the copilot and memo generator run on a free-tier
+key. Also resolves two pre-existing pin conflicts that blocked
+installation: optbinning 0.19 capped numpy below 2, and the ortools it
+pulls caps protobuf below dbt-core's floor."</code></pre>
 <p><strong>Why name specific files rather than <code>git add .</code>:</strong> It prevents accidentally staging a key file, a large binary, or local scratch output.</p>
 </div>
 </div>
