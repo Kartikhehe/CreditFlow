@@ -1,0 +1,2309 @@
+<title>CreditFlow Field Manual</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&family=Public+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: single reading column, left-rail sticky nav on wide screens; ledger-paper palette with ink-blue accent and a ruled-document feel */
+:root{
+  --paper:#f7f6f2;
+  --surface:#fffefb;
+  --ink:#1c1e21;
+  --ink-soft:#5a6068;
+  --rule:#ddd9ce;
+  --accent:#1f4e79;
+  --accent-soft:#e8eff6;
+  --good:#1f6b4a;
+  --warn:#8a5a12;
+  --bad:#9b2c2c;
+  --good-bg:#e6f2ec;
+  --warn-bg:#faf0dc;
+  --bad-bg:#f8e8e8;
+  --code-bg:#f0eee7;
+  --font-display:"Newsreader",Georgia,"Times New Roman",serif;
+  --font-body:"Public Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --font-mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  --measure:68ch;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --paper:#16181b;
+    --surface:#1d2024;
+    --ink:#e8e6e1;
+    --ink-soft:#a0a6ad;
+    --rule:#33373d;
+    --accent:#7eb3e0;
+    --accent-soft:#1f2b36;
+    --good:#6fc79b;
+    --warn:#dcae5f;
+    --bad:#e08b8b;
+    --good-bg:#17291f;
+    --warn-bg:#2b2316;
+    --bad-bg:#2b1b1b;
+    --code-bg:#24272c;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#16181b;
+  --surface:#1d2024;
+  --ink:#e8e6e1;
+  --ink-soft:#a0a6ad;
+  --rule:#33373d;
+  --accent:#7eb3e0;
+  --accent-soft:#1f2b36;
+  --good:#6fc79b;
+  --warn:#dcae5f;
+  --bad:#e08b8b;
+  --good-bg:#17291f;
+  --warn-bg:#2b2316;
+  --bad-bg:#2b1b1b;
+  --code-bg:#24272c;
+  color-scheme:dark;
+}
+body{
+  background:var(--paper);
+  color:var(--ink);
+  font-family:var(--font-body);
+  font-size:16px;
+  line-height:1.65;
+  margin:0;
+}
+*{box-sizing:border-box}
+
+.shell{
+  display:grid;
+  grid-template-columns:minmax(0,1fr);
+  gap:0;
+  max-width:1180px;
+  margin:0 auto;
+  padding-inline:20px;
+  padding-block:0;
+}
+@media (min-width:1000px){
+  .shell{grid-template-columns:232px minmax(0,1fr);gap:48px}
+}
+
+/* ---------- nav ---------- */
+.rail{display:none}
+@media (min-width:1000px){
+  .rail{
+    display:block;
+    position:sticky;
+    top:env(safe-area-inset-top,0px);
+    align-self:start;
+    max-height:100vh;
+    overflow-y:auto;
+    padding-block:40px 32px;
+    font-size:13.5px;
+  }
+}
+.rail-title{
+  font-family:var(--font-body);
+  font-size:10.5px;
+  font-weight:700;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--ink-soft);
+  margin:0 0 12px;
+}
+.rail a{
+  display:block;
+  color:var(--ink-soft);
+  text-decoration:none;
+  padding:4px 0 4px 10px;
+  border-left:2px solid var(--rule);
+  line-height:1.4;
+}
+.rail a:hover{color:var(--accent);border-left-color:var(--accent)}
+.rail .rail-group{margin-bottom:18px}
+
+main{min-width:0;padding-block:40px 80px}
+
+/* ---------- masthead ---------- */
+.masthead{
+  border-bottom:3px double var(--rule);
+  padding-bottom:28px;
+  margin-bottom:44px;
+}
+.eyebrow{
+  font-size:10.5px;
+  font-weight:700;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  color:var(--accent);
+  margin:0 0 14px;
+}
+h1{
+  font-family:var(--font-display);
+  font-size:clamp(2.2rem,5.5vw,3.5rem);
+  line-height:1.08;
+  font-weight:600;
+  letter-spacing:-.02em;
+  margin:0 0 16px;
+  text-wrap:balance;
+}
+.standfirst{
+  font-family:var(--font-display);
+  font-size:clamp(1.05rem,2.2vw,1.3rem);
+  line-height:1.5;
+  color:var(--ink-soft);
+  max-width:60ch;
+  margin:0;
+}
+.meta-strip{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px 28px;
+  margin-top:24px;
+  font-size:12.5px;
+  color:var(--ink-soft);
+}
+.meta-strip b{color:var(--ink);font-weight:600}
+
+/* ---------- sections ---------- */
+section{margin-bottom:64px;scroll-margin-top:24px}
+h2{
+  font-family:var(--font-display);
+  font-size:clamp(1.6rem,3.4vw,2.1rem);
+  font-weight:600;
+  line-height:1.2;
+  letter-spacing:-.015em;
+  margin:0 0 6px;
+  text-wrap:balance;
+}
+.h2-rule{
+  display:flex;
+  align-items:baseline;
+  gap:14px;
+  border-bottom:1px solid var(--rule);
+  padding-bottom:10px;
+  margin-bottom:24px;
+}
+.h2-num{
+  font-family:var(--font-mono);
+  font-size:12px;
+  color:var(--accent);
+  font-weight:500;
+  flex-shrink:0;
+  padding-top:4px;
+}
+h3{
+  font-family:var(--font-body);
+  font-size:1.14rem;
+  font-weight:700;
+  line-height:1.35;
+  margin:36px 0 10px;
+  letter-spacing:-.005em;
+}
+h4{
+  font-family:var(--font-body);
+  font-size:.97rem;
+  font-weight:700;
+  margin:24px 0 8px;
+  color:var(--ink);
+}
+p{margin:0 0 15px;max-width:var(--measure)}
+ul,ol{margin:0 0 16px;padding-left:22px;max-width:var(--measure)}
+li{margin-bottom:7px}
+li::marker{color:var(--ink-soft)}
+strong{font-weight:600}
+a{color:var(--accent)}
+
+code{
+  font-family:var(--font-mono);
+  font-size:.855em;
+  background:var(--code-bg);
+  padding:.14em .38em;
+  border-radius:3px;
+  overflow-wrap:break-word;
+}
+pre{
+  font-family:var(--font-mono);
+  background:var(--code-bg);
+  border:1px solid var(--rule);
+  border-radius:5px;
+  padding:14px 16px;
+  overflow-x:auto;
+  font-size:13px;
+  line-height:1.6;
+  margin:0 0 18px;
+}
+pre code{background:none;padding:0;font-size:inherit}
+.cmt{color:var(--ink-soft)}
+
+/* ---------- glossary term ---------- */
+.term{
+  border-left:3px solid var(--accent);
+  background:var(--surface);
+  padding:14px 18px;
+  margin:0 0 14px;
+  border-radius:0 5px 5px 0;
+  max-width:var(--measure);
+}
+.term-name{
+  font-weight:700;
+  font-size:.97rem;
+  margin:0 0 5px;
+  font-family:var(--font-body);
+}
+.term p{margin:0;font-size:.93rem;line-height:1.6}
+.term p + p{margin-top:8px}
+
+/* ---------- callouts ---------- */
+.note{
+  border:1px solid var(--rule);
+  background:var(--surface);
+  border-radius:6px;
+  padding:16px 18px;
+  margin:0 0 20px;
+  max-width:var(--measure);
+  font-size:.94rem;
+}
+.note-label{
+  font-size:10px;
+  font-weight:700;
+  letter-spacing:.13em;
+  text-transform:uppercase;
+  color:var(--ink-soft);
+  display:block;
+  margin-bottom:7px;
+}
+.note p:last-child{margin-bottom:0}
+.note.why{border-left:3px solid var(--accent);background:var(--accent-soft)}
+.note.why .note-label{color:var(--accent)}
+.note.warn{border-left:3px solid var(--warn);background:var(--warn-bg)}
+.note.warn .note-label{color:var(--warn)}
+.note.iv{border-left:3px solid var(--good);background:var(--good-bg)}
+.note.iv .note-label{color:var(--good)}
+
+/* ---------- tables ---------- */
+.tw{overflow-x:auto;margin:0 0 22px;border:1px solid var(--rule);border-radius:6px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:13.5px;min-width:480px}
+th{
+  text-align:left;
+  font-size:10.5px;
+  font-weight:700;
+  letter-spacing:.09em;
+  text-transform:uppercase;
+  color:var(--ink-soft);
+  padding:11px 14px;
+  border-bottom:1.5px solid var(--rule);
+  white-space:nowrap;
+  background:var(--paper);
+}
+td{padding:11px 14px;border-bottom:1px solid var(--rule);vertical-align:top;line-height:1.5}
+tr:last-child td{border-bottom:none}
+td code{font-size:12px;white-space:nowrap}
+.num{font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}
+
+/* ---------- pipeline / stage cards ---------- */
+.stage{
+  border:1px solid var(--rule);
+  border-radius:7px;
+  background:var(--surface);
+  margin:0 0 20px;
+  overflow:hidden;
+}
+.stage-head{
+  display:flex;
+  align-items:center;
+  gap:13px;
+  padding:13px 18px;
+  border-bottom:1px solid var(--rule);
+  background:var(--paper);
+  flex-wrap:wrap;
+}
+.stage-n{
+  font-family:var(--font-mono);
+  font-size:11px;
+  font-weight:500;
+  color:var(--surface);
+  background:var(--accent);
+  border-radius:4px;
+  padding:3px 8px;
+  flex-shrink:0;
+}
+.stage-cmd{
+  font-family:var(--font-mono);
+  font-size:13.5px;
+  font-weight:500;
+  color:var(--ink);
+}
+.stage-time{
+  font-size:11.5px;
+  color:var(--ink-soft);
+  margin-left:auto;
+  font-variant-numeric:tabular-nums;
+}
+.stage-body{padding:17px 18px 5px}
+.stage-body p,.stage-body ul{max-width:none}
+.io{
+  display:grid;
+  gap:12px;
+  margin:14px 0 16px;
+  font-size:.9rem;
+}
+@media (min-width:640px){.io{grid-template-columns:1fr 1fr}}
+.io > div{
+  background:var(--paper);
+  border:1px solid var(--rule);
+  border-radius:5px;
+  padding:11px 13px;
+}
+.io-label{
+  font-size:9.5px;
+  font-weight:700;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  color:var(--ink-soft);
+  display:block;
+  margin-bottom:5px;
+}
+.io ul{margin:0;padding-left:17px}
+.io li{margin-bottom:3px;line-height:1.45}
+
+/* ---------- step list (final walkthrough) ---------- */
+.step{
+  border-top:1px solid var(--rule);
+  padding:22px 0 4px 0;
+  display:grid;
+  grid-template-columns:auto minmax(0,1fr);
+  gap:0 16px;
+}
+.step-n{
+  font-family:var(--font-mono);
+  font-size:13px;
+  font-weight:500;
+  color:var(--accent);
+  padding-top:2px;
+  font-variant-numeric:tabular-nums;
+}
+.step-b{min-width:0}
+.step-b h3{margin-top:0}
+.step-b > :last-child{margin-bottom:0}
+
+/* ---------- misc ---------- */
+.pill{
+  display:inline-block;
+  font-size:11px;
+  font-weight:600;
+  padding:2px 8px;
+  border-radius:20px;
+  letter-spacing:.02em;
+  white-space:nowrap;
+}
+.pill.g{background:var(--good-bg);color:var(--good)}
+.pill.w{background:var(--warn-bg);color:var(--warn)}
+.pill.b{background:var(--bad-bg);color:var(--bad)}
+.pill.n{background:var(--accent-soft);color:var(--accent)}
+
+.tree{
+  font-family:var(--font-mono);
+  font-size:12.5px;
+  line-height:1.85;
+  background:var(--surface);
+  border:1px solid var(--rule);
+  border-radius:6px;
+  padding:16px 18px;
+  overflow-x:auto;
+  margin:0 0 20px;
+}
+.tree .d{color:var(--accent);font-weight:500}
+.tree .c{color:var(--ink-soft)}
+
+.kv{margin:0 0 20px;max-width:var(--measure)}
+.kv dt{font-weight:700;font-size:.95rem;margin-top:13px}
+.kv dd{margin:3px 0 0;color:var(--ink-soft);font-size:.93rem;line-height:1.6}
+
+.toc-inline{
+  background:var(--surface);
+  border:1px solid var(--rule);
+  border-radius:7px;
+  padding:20px 22px;
+  margin-bottom:48px;
+}
+.toc-inline ol{
+  margin:0;
+  padding-left:20px;
+  columns:2;
+  column-gap:34px;
+  max-width:none;
+}
+@media (max-width:620px){.toc-inline ol{columns:1}}
+.toc-inline li{margin-bottom:5px}
+.toc-inline a{text-decoration:none}
+.toc-inline a:hover{text-decoration:underline}
+
+hr.sep{border:none;border-top:1px solid var(--rule);margin:34px 0}
+
+.flow{
+  font-family:var(--font-mono);
+  font-size:12px;
+  line-height:2;
+  background:var(--surface);
+  border:1px solid var(--rule);
+  border-radius:6px;
+  padding:18px;
+  overflow-x:auto;
+  margin:0 0 22px;
+  white-space:pre;
+  color:var(--ink);
+}
+
+footer{
+  border-top:3px double var(--rule);
+  padding-top:24px;
+  margin-top:20px;
+  font-size:13px;
+  color:var(--ink-soft);
+}
+footer p{max-width:var(--measure)}
+</style>
+
+<div class="shell">
+
+<nav class="rail">
+  <p class="rail-title">Contents</p>
+  <div class="rail-group">
+    <a href="#what">1 · What this is</a>
+    <a href="#finance">2 · Finance words</a>
+    <a href="#genai">3 · AI words</a>
+    <a href="#data">4 · The data</a>
+  </div>
+  <div class="rail-group">
+    <a href="#stack">5 · The tech stack</a>
+    <a href="#files">6 · File structure</a>
+    <a href="#flow">7 · End-to-end flow</a>
+  </div>
+  <div class="rail-group">
+    <a href="#pipeline">8 · Stage by stage</a>
+    <a href="#skills">9 · Skills on show</a>
+    <a href="#interview">10 · Interview answers</a>
+  </div>
+  <div class="rail-group">
+    <a href="#setup">11 · Run it yourself</a>
+    <a href="#results">12 · Real results</a>
+    <a href="#github">13 · Push to GitHub</a>
+    <a href="#trouble">14 · If it breaks</a>
+  </div>
+</nav>
+
+<main>
+
+<header class="masthead">
+  <p class="eyebrow">Project Field Manual · Plain English</p>
+  <h1>CreditFlow, explained from scratch</h1>
+  <p class="standfirst">A credit risk platform that decides who gets a loan — and can defend every decision to a regulator. This manual explains every finance term, every piece of technology, and every step you need to run it, assuming you know none of it yet.</p>
+  <div class="meta-strip">
+    <span><b>Written for:</b> you, preparing to explain this project in an interview</span>
+    <span><b>Assumes:</b> no finance, no ML, no data engineering background</span>
+  </div>
+</header>
+
+<div class="toc-inline">
+  <ol>
+    <li><a href="#what">What this project actually is</a></li>
+    <li><a href="#finance">Every finance term, in plain words</a></li>
+    <li><a href="#genai">Every AI and GenAI term</a></li>
+    <li><a href="#data">Where the data comes from</a></li>
+    <li><a href="#stack">Every technology and why it's there</a></li>
+    <li><a href="#files">The file structure, folder by folder</a></li>
+    <li><a href="#flow">The end-to-end flow</a></li>
+    <li><a href="#pipeline">What each stage does</a></li>
+    <li><a href="#skills">The skills this demonstrates</a></li>
+    <li><a href="#interview">Answers to likely interview questions</a></li>
+    <li><a href="#setup">Step-by-step: running it yourself</a></li>
+    <li><a href="#results">The results from a real run</a></li>
+    <li><a href="#github">Pushing results to GitHub</a></li>
+    <li><a href="#trouble">If something breaks</a></li>
+  </ol>
+</div>
+
+<!-- ============================================ -->
+<section id="what">
+<div class="h2-rule"><span class="h2-num">01</span><h2>What this project actually is</h2></div>
+
+<p>Imagine you run a company that lends money to people. Someone applies for a $15,000 loan. You have to answer one question: <strong>do I give this person money or not?</strong></p>
+
+<p>Say yes to the wrong person and they stop paying — you lose most of that $15,000. Say no to the right person and you lose the interest they would have paid you. Both mistakes cost money. CreditFlow is a system that makes this decision as well as possible, and — just as importantly — can <em>explain</em> every decision afterwards.</p>
+
+<p>It does five things:</p>
+
+<ol>
+  <li><strong>Collects and organises the data.</strong> It takes roughly 30 million historical loan applications plus economic data (unemployment rates, interest rates) and arranges them into a clean, queryable database.</li>
+  <li><strong>Predicts risk.</strong> It builds two models that estimate the probability that any given applicant will stop paying. One model is simple and explainable; the other is more accurate but harder to explain. The project deliberately uses the simpler one as the real model and keeps the complex one as a benchmark.</li>
+  <li><strong>Turns a prediction into a decision.</strong> A probability isn't an answer. The system works out the money maths — revenue, losses, funding costs — and finds the approval threshold that makes the most profit.</li>
+  <li><strong>Watches for the model going stale.</strong> If the kind of people applying today differs from the people the model learned from, the model's predictions become untrustworthy. The system measures this and raises a flag.</li>
+  <li><strong>Answers questions in plain English.</strong> There's an AI assistant you can ask "what's the default rate by credit score band?" and it writes the database query, runs it safely, and shows you the answer. It also drafts regulatory documentation.</li>
+</ol>
+
+<div class="note why">
+<span class="note-label">The thing that makes this project stand out</span>
+<p>Most portfolio projects build a model and report an accuracy number. This one builds the entire chain around the model: where the data came from, whether the data is trustworthy, whether the model is allowed to be used, what business decision it drives, and what happens when it degrades. That chain is what an actual lending institution needs, and it's what separates a student project from something resembling production work.</p>
+</div>
+
+<h3>The "Lending Club" story behind the data</h3>
+
+<p>Lending Club was a US company that connected borrowers to investors. Because investors needed to judge the risk themselves, Lending Club published detailed records of every loan it funded — the borrower's credit profile, the loan terms, and crucially <em>what eventually happened</em> (fully repaid, or charged off). It also published the applications it <strong>rejected</strong>.</p>
+
+<p>That second file is unusual and it's the reason this dataset is worth the effort. Almost every public credit dataset only shows you approved loans. Having the rejected ones lets this project tackle a genuinely hard statistical problem (explained in <a href="#rejectinf">reject inference</a>) that most treatments ignore entirely.</p>
+
+</section>
+
+<!-- ============================================ -->
+<section id="finance">
+<div class="h2-rule"><span class="h2-num">02</span><h2>Every finance term, in plain words</h2></div>
+
+<p>These are the terms you'll see across the code, the docs, and this manual. Learn these and the project becomes readable.</p>
+
+<h3>The basics of lending</h3>
+
+<div class="term">
+<p class="term-name">Loan origination</p>
+<p>The moment a loan is created and the money is handed over. "Origination date" = the day the loan started. "At origination" = information known on that day, before anyone knew whether it would be repaid.</p>
+</div>
+
+<div class="term">
+<p class="term-name">Principal</p>
+<p>The actual amount of money borrowed, not counting interest. Borrow $10,000 and the principal is $10,000.</p>
+</div>
+
+<div class="term">
+<p class="term-name">Interest rate / coupon</p>
+<p>The percentage charged per year for borrowing. A $10,000 loan at 13% costs you $1,300 a year in interest. This is the lender's revenue. "Coupon" is just industry slang for the interest rate on a specific loan.</p>
+</div>
+
+<div class="term">
+<p class="term-name">Term</p>
+<p>How long the loan lasts. In this dataset, either 36 months or 60 months.</p>
+</div>
+
+<div class="term">
+<p class="term-name">Instalment</p>
+<p>The fixed monthly payment the borrower makes, covering both principal and interest.</p>
+</div>
+
+<div class="term">
+<p class="term-name">Default / charge-off</p>
+<p>The borrower stopped paying. "Charged off" is the accounting term for when the lender formally gives up on collecting and writes the loan off as a loss. In this project, <strong>default is the thing we're trying to predict.</strong> It's recorded as <code>is_default = 1</code>.</p>
+</div>
+
+<div class="term">
+<p class="term-name">Fully paid</p>
+<p>The borrower repaid everything. <code>is_default = 0</code>. This is the good outcome.</p>
+</div>
+
+<div class="term">
+<p class="term-name">Terminal status</p>
+<p>The loan has <em>finished</em> — it either fully paid or charged off. Loans still being repaid right now are "in flight" and we don't know how they'll end. The project only trains on terminal loans, because an unfinished loan has no known answer. This is tracked by the <code>is_terminal</code> flag.</p>
+</div>
+
+<h3>Measuring the borrower</h3>
+
+<div class="term">
+<p class="term-name">FICO score / credit score</p>
+<p>A number from roughly 300 to 850 summarising how reliably someone has repaid debt in the past. Higher is better. 300–579 is poor, 800+ is excellent. It's the single most important predictor in consumer lending.</p>
+</div>
+
+<div class="term">
+<p class="term-name">DTI — Debt-to-Income ratio</p>
+<p>Monthly debt payments divided by monthly income, as a percentage. A DTI of 35% means 35 cents of every dollar you earn already goes to debt. Higher DTI means less room to absorb a shock, so higher risk.</p>
+</div>
+
+<div class="term">
+<p class="term-name">Revolving utilisation</p>
+<p>How much of your available credit card limit you're actually using. If you have $10,000 of limits and $9,000 of balance, utilisation is 90% — a strong signal of financial stress. Low utilisation suggests you have slack.</p>
+</div>
+
+<div class="term">
+<p class="term-name">Delinquency</p>
+<p>A missed or late payment, short of a full default. "Delinquencies in the last 2 years" counts recent slip-ups.</p>
+</div>
+
+<div class="term">
+<p class="term-name">Credit inquiries</p>
+<p>Each time you apply for credit, a lender checks your file and leaves an "inquiry". Many inquiries in 6 months can mean someone is desperately shopping for money — a risk signal.</p>
+</div>
+
+<div class="term">
+<p class="term-name">Public records / bankruptcies</p>
+<p>Legal financial events on your record. A bankruptcy is the strongest negative mark in consumer credit.</p>
+</div>
+
+<div class="term">
+<p class="term-name">Grade and sub-grade</p>
+<p>Lending Club's own risk rating, A (safest) through G (riskiest), with sub-grades like B3. Lending Club set the interest rate from this grade. This project uses the grade both as an input feature <em>and</em>, via its price, as a benchmark to beat.</p>
+</div>
+
+<h3>Risk modelling terms</h3>
+
+<div class="term">
+<p class="term-name">PD — Probability of Default</p>
+<p>The model's output: a number between 0 and 1 saying how likely this borrower is to default. 0.08 means an 8% chance. This is the core prediction the entire system is built around.</p>
+</div>
+
+<div class="term">
+<p class="term-name">LGD — Loss Given Default</p>
+<p>If they <em>do</em> default, what fraction of the money do you actually lose? Not 100% — you can chase the debt and recover something. This project assumes <strong>65%</strong>, meaning you lose 65 cents per dollar on a defaulted loan. These loans are unsecured (no house or car to repossess), so recovery is limited.</p>
+</div>
+
+<div class="term">
+<p class="term-name">EAD — Exposure at Default</p>
+<p>How much money is at risk. Here it's simply the funded loan amount.</p>
+</div>
+
+<div class="term">
+<p class="term-name">Expected loss</p>
+<p>The famous credit risk formula: <strong>Expected Loss = PD × LGD × EAD</strong>. A $10,000 loan with an 8% default chance and 65% loss severity has an expected loss of 0.08 × 0.65 × $10,000 = <strong>$520</strong>. That's the amount you should expect to lose on average, and it's what gets compared against the interest revenue.</p>
+</div>
+
+<div class="term">
+<p class="term-name">Scorecard</p>
+<p>The traditional, regulator-friendly credit model. Each borrower attribute earns a fixed number of points — 620–660 FICO might be worth +12 points, DTI above 30% might be −8 — and the total converts to a probability. Its advantage is total transparency: you can print it on one page and point at exactly why someone was declined.</p>
+</div>
+
+<div class="term">
+<p class="term-name">WOE — Weight of Evidence</p>
+<p>The technique for turning a raw number into scorecard points. You chop a variable (say FICO) into bands, and for each band compute how much more likely bad outcomes are versus good ones. The result is a single number per band expressing "how much evidence of risk does this band carry". It makes wildly different variables comparable and handles non-linear relationships.</p>
+</div>
+
+<div class="term">
+<p class="term-name">IV — Information Value</p>
+<p>A score for how predictive a variable is overall. Rough reading: below 0.02 is useless, 0.1–0.3 is medium, above 0.5 is strong. This project only admits variables with IV between 0.02 and 1.0 — the upper cap is a safety check, because a variable <em>too</em> predictive is usually secretly leaking the answer.</p>
+</div>
+
+<div class="term">
+<p class="term-name">Monotonicity</p>
+<p>The constraint that the relationship must only go one direction. A better FICO score must <em>never</em> increase predicted risk. Real data has noise that can suggest a bump where 700–720 looks riskier than 680–700; a monotonic model refuses to learn that bump. This matters legally — you cannot defend a policy that penalises someone for having a better credit score.</p>
+</div>
+
+<div class="term">
+<p class="term-name">Champion and challenger</p>
+<p>The champion is the model actually used for decisions. The challenger is an alternative run alongside to see if it would do better. In this project, the <em>simple</em> scorecard is champion and the <em>more accurate</em> machine learning model is challenger — a deliberate choice explained in <a href="#interview">the interview section</a>.</p>
+</div>
+
+<h3>How model quality is measured</h3>
+
+<div class="term">
+<p class="term-name">AUC and Gini</p>
+<p>AUC (Area Under the ROC Curve) measures <strong>ranking</strong> ability: pick a random defaulter and a random good payer — what's the chance the model scored the defaulter as riskier? 0.5 is a coin flip, 1.0 is perfect. Credit models typically score 0.65–0.72. Gini is just a rescaling: <code>Gini = 2 × AUC − 1</code>. Europe quotes Gini, the US quotes AUC; they say the same thing.</p>
+</div>
+
+<div class="term">
+<p class="term-name">KS — Kolmogorov-Smirnov statistic</p>
+<p>The maximum gap between the cumulative distributions of good and bad borrowers. In practice: the single cutoff point where the model best separates the two groups. Higher is better.</p>
+</div>
+
+<div class="term">
+<p class="term-name">Brier score</p>
+<p>Measures whether the probabilities are <em>numerically right</em>, not just well-ordered. Lower is better. This matters because the profit calculation multiplies by the probability — see calibration.</p>
+</div>
+
+<div class="term">
+<p class="term-name">Calibration</p>
+<p>A model is calibrated if, among all applicants it scored at 10%, roughly 10% actually default. A model can rank perfectly but be badly calibrated — imagine it says 20% whenever the truth is 10%. The ranking (AUC) is flawless but every profit calculation is wrong. This project fixes this with <strong>isotonic regression</strong>, a technique that adjusts the probability levels while leaving the ordering untouched.</p>
+</div>
+
+<div class="term">
+<p class="term-name">Discrimination</p>
+<p>Industry jargon for ranking ability (AUC/Gini/KS). Nothing to do with unfair treatment — it means "can the model tell the two groups apart".</p>
+</div>
+
+<h3>Portfolio and decision terms</h3>
+
+<div class="term">
+<p class="term-name">Vintage</p>
+<p>All loans originated in the same period, grouped together — like a wine vintage. "The 2015-Q3 vintage" means every loan issued in that quarter. Vintages are compared because economic conditions differ by year.</p>
+</div>
+
+<div class="term">
+<p class="term-name">Months on book</p>
+<p>How long a loan has existed. Essential for fair comparison: a loan issued 6 months ago has had almost no chance to default yet, while a 4-year-old loan has had every chance. Comparing their default rates directly is meaningless.</p>
+</div>
+
+<div class="term">
+<p class="term-name">Vintage curve</p>
+<p>The cumulative default rate plotted against months on book, one line per vintage. This lets you compare cohorts <em>at the same age</em> — "at 18 months, the 2015 vintage had defaulted at 6% while 2016 had reached 8%" — which is the only honest comparison.</p>
+</div>
+
+<div class="term">
+<p class="term-name">Cutoff</p>
+<p>The threshold. "Approve everyone with a PD at or below 15%." Moving the cutoff up approves more people and earns more interest but takes more losses. Finding the best cutoff is the whole decisioning problem.</p>
+</div>
+
+<div class="term">
+<p class="term-name">Approval rate</p>
+<p>The percentage of applicants you approve at a given cutoff.</p>
+</div>
+
+<div class="term">
+<p class="term-name">Profit frontier</p>
+<p>The curve of expected profit plotted against approval rate. Its peak is the profit-maximising cutoff. The project emphasises that this curve is usually <strong>flat near the top</strong>, meaning several approval rates are nearly equally good — so the final choice is a business appetite decision, not a mathematical one.</p>
+</div>
+
+<div class="term">
+<p class="term-name">Swap set analysis</p>
+<p>The comparison a credit committee actually asks for. Hold the number of approvals <em>identical</em> between two models, then look at the difference in <em>who</em> they approve. "Swap-ins" are people the new model approves that the old one rejected; "swap-outs" are the reverse. If the swap-ins default less than the swap-outs, the new model is genuinely ranking better. Holding volume equal removes the confound where a model just approves more people and looks different for boring reasons.</p>
+</div>
+
+<div class="term">
+<p class="term-name">Cost of funds</p>
+<p>What it costs the lender to <em>obtain</em> the money it lends out. Banks borrow at say 3.5% and lend at 13%; the gap is where profit lives. Assumed at <strong>3.5% annually</strong> here.</p>
+</div>
+
+<div class="term">
+<p class="term-name">Opex — operating expense</p>
+<p>The cost of acquiring and servicing a loan: marketing, underwriting staff, payment processing, collections. Assumed at a flat <strong>$120 per booked loan</strong>.</p>
+</div>
+
+<div class="term">
+<p class="term-name">Prepayment</p>
+<p>The borrower repays early. Good for risk, bad for revenue — you don't collect the remaining interest. It concentrates among the <em>best</em> borrowers, who refinance elsewhere when rates improve. The project applies a flat <strong>55% retention</strong> haircut to interest revenue and is openly critical of that flatness, since prepayment isn't uniform.</p>
+</div>
+
+<div class="term">
+<p class="term-name">Through-the-door population</p>
+<p>Everyone who <em>applies</em>, as opposed to everyone who gets approved. The distinction is the heart of the reject inference problem below.</p>
+</div>
+
+<h3 id="rejectinf">Three concepts worth extra attention</h3>
+
+<div class="note iv">
+<span class="note-label">Reject inference — the sample bias problem</span>
+<p>Your historical data only has outcomes for loans you <em>approved</em>. But you approved those people precisely because they looked good. So your data describes "the default rate <em>among people we approved</em>", not "the default rate among people who apply".</p>
+<p>Why this bites: if you loosen your policy to approve more people, you face a population your model has never described. Your metrics were measured on a filtered, friendlier sample.</p>
+<p>How this project handles it: it scores the rejected applications with a deliberately stripped-down scorecard using only the five attributes both files share. Then — crucially — it does <strong>not</strong> label them as defaults. It carries each rejected applicant forward as a <em>fraction</em>: if inferred PD is 0.3, that person counts as 0.3 of a bad outcome and 0.7 of a good one. This is called <strong>parcelling</strong> or fuzzy augmentation. Nothing is pretended to be known.</p>
+<p>The honest part: this rests on a "rejection penalty" — the assumption that rejected people are <em>worse</em> than approved people at the same score, because the original underwriter saw something the five shared columns don't capture. That multiplier cannot be derived from the data. So the project reports results across a range of penalties (1.0 to 2.0) instead of defending one, and lets the reader pick.</p>
+</div>
+
+<div class="note iv">
+<span class="note-label">PSI — Population Stability Index</span>
+<p>A number measuring how much the applicant population has <em>shifted</em> between when the model was built and now. Technically it's a distributional distance; practically it's "are today's applicants still the same kind of people the model learned from?"</p>
+<p>Reading the result: <span class="pill g">below 0.10 stable</span> <span class="pill w">0.10–0.25 investigate</span> <span class="pill b">above 0.25 revalidate</span></p>
+<p>The implementation detail that matters: the bin boundaries are computed <strong>once</strong> on the original development data and then frozen. If you recompute the bins for each new period, both distributions get forced onto their own shapes and the index returns near-zero no matter how far things actually moved. Getting this wrong is the standard PSI bug, and this project has a test specifically asserting it fires on a genuinely shifted sample.</p>
+<p>The score-level row matters most. Individual features can drift and cancel each other out. But if the <em>model score</em> distribution has moved, then the population being approved has changed — which is a policy change nobody signed off on.</p>
+</div>
+
+<div class="note iv">
+<span class="note-label">Data leakage — the silent project-killer</span>
+<p>Leakage is when your model accidentally sees information that wouldn't exist at decision time. The classic example here: using <code>total_payment</code> as a feature. Of course it predicts default perfectly — people who defaulted paid less! But at application time, that number doesn't exist. Your model shows 0.99 AUC in testing and is useless in production.</p>
+<p>This project has five separate defences against it, listed in <a href="#pipeline">the pipeline section</a>. The most explicit is a hard-coded <code>BANNED_COLUMNS</code> list and an assertion that crashes the build if any of those columns reaches the model. Knowing what leakage is and designing against it deliberately is one of the strongest signals of real experience you can show in an interview.</p>
+</div>
+
+</section>
+
+<!-- ============================================ -->
+<section id="genai">
+<div class="h2-rule"><span class="h2-num">03</span><h2>Every AI and GenAI term</h2></div>
+
+<p>The last part of the project is an AI assistant layer. These are the concepts behind it.</p>
+
+<div class="term">
+<p class="term-name">LLM — Large Language Model</p>
+<p>The technology behind ChatGPT, Claude, and Gemini. A model trained on enormous amounts of text that can read instructions and generate text in response. Here it's used for two jobs: writing SQL queries from English questions, and drafting a regulatory document.</p>
+</div>
+
+<div class="term">
+<p class="term-name">Prompt / system prompt</p>
+<p>The instructions you send the model. A "system prompt" is the standing briefing — in this project it contains the database schema and the rules ("only write SELECT statements, never DDL"). The user's question is sent separately.</p>
+</div>
+
+<div class="term">
+<p class="term-name">Hallucination</p>
+<p>When an LLM confidently states something false. The reason this project is built the way it is: in a regulatory document, a hallucinated test result isn't a typo, it's a compliance incident. A supervisor reads that document as a statement of fact.</p>
+</div>
+
+<div class="term">
+<p class="term-name">RAG — Retrieval Augmented Generation</p>
+<p>The standard technique for stopping hallucination. Instead of asking the model to recall facts from training, you <em>retrieve</em> relevant real documents first and hand them to the model, instructing it to answer only from those. "Retrieval" = finding the right passages. "Augmented" = adding them to the prompt. "Generation" = the model writes the answer.</p>
+</div>
+
+<div class="term">
+<p class="term-name">Grounding</p>
+<p>Forcing the model's output to rest on supplied evidence. This project grounds <strong>twice over</strong>: regulatory claims must cite a retrieved guidance passage by name, and every number must come from the metric CSV files the pipeline produced. The prompt explicitly instructs the model to say "the evidence is insufficient" rather than invent something.</p>
+</div>
+
+<div class="term">
+<p class="term-name">Chunking</p>
+<p>Splitting long documents into passages small enough to retrieve and fit in a prompt. The subtlety here: this project splits on <em>section boundaries first</em>, then by length. A naive fixed-width split can separate a rule from the clause that qualifies it — producing an answer that's fluent, properly sourced, and completely wrong, because the retrieved passage said "banks must" without the next sentence's exemption.</p>
+</div>
+
+<div class="term">
+<p class="term-name">Embedding / vector</p>
+<p>A way of turning text into a list of numbers that captures its meaning. Texts with similar meanings get similar number-lists, so you can find related passages by mathematical closeness. This catches paraphrase — a query about "monitoring expectations" matches a passage about "ongoing performance review" even with no shared words.</p>
+</div>
+
+<div class="term">
+<p class="term-name">Vector database</p>
+<p>A database built to store embeddings and answer "find me the most similar ones, fast". This project uses <strong>ChromaDB</strong>.</p>
+</div>
+
+<div class="term">
+<p class="term-name">Cosine similarity</p>
+<p>The standard measure of how close two embeddings are. Think "angle between two arrows" — small angle means similar meaning.</p>
+</div>
+
+<div class="term">
+<p class="term-name">BM25 / sparse retrieval</p>
+<p>Classic keyword search, scoring documents by term overlap while discounting common words. It's the opposite strength to embeddings: it catches <em>exact terminology</em>. Regulatory text turns on precise phrases, and an embedding model may treat two technically distinct phrases as near-identical where a practitioner would not.</p>
+</div>
+
+<div class="term">
+<p class="term-name">Hybrid retrieval</p>
+<p>Running both dense (embedding) and sparse (BM25) search and combining the results. You get paraphrase tolerance <em>and</em> exact-term precision.</p>
+</div>
+
+<div class="term">
+<p class="term-name">RRF — Reciprocal Rank Fusion</p>
+<p>How this project merges the two result lists. The problem: cosine similarity scores and BM25 scores are on completely incomparable scales, and normalising them needs calibration that breaks whenever you add a document. RRF sidesteps this by ignoring scores entirely and using only <strong>rank position</strong> — each result contributes <code>1 / (60 + position)</code>, summed across both lists. Elegant and robust.</p>
+</div>
+
+<div class="term">
+<p class="term-name">Cross-encoder / reranker</p>
+<p>A second, slower, more accurate model applied to the shortlist. An embedding model reads the query and the passage <em>separately</em>, so it can only judge whether they're in a similar region of meaning-space. A cross-encoder reads both <em>together</em> and judges relevance directly — far more precise at picking which of twenty plausible passages actually answers the question. It's too slow to run over the whole corpus, so it reranks the top 20.</p>
+</div>
+
+<div class="term">
+<p class="term-name">Text-to-SQL</p>
+<p>Translating an English question into a database query. "What's the default rate by FICO band?" becomes a real SQL SELECT statement, which is executed and the result returned.</p>
+</div>
+
+<div class="term">
+<p class="term-name">AST — Abstract Syntax Tree</p>
+<p>The structured, tree-shaped representation of parsed code. Instead of treating SQL as text, you parse it into a tree where you can ask structural questions: "is the root node a SELECT?", "does any DELETE node appear anywhere beneath?", "what tables are referenced?"</p>
+</div>
+
+<div class="term">
+<p class="term-name">Guardrail</p>
+<p>A safety check between the AI's output and the real world. Here, <strong>never trust generated SQL</strong>. The guardrail parses it to an AST and requires: root must be SELECT, no mutating node anywhere in the tree, every table must be on an explicit allowlist, and a row limit is injected if missing. The database connection is also opened read-only, so even a guardrail bug can't cause a write.</p>
+</div>
+
+<div class="note why">
+<span class="note-label">Why a keyword blocklist was rejected — a great interview point</span>
+<p>The naive guardrail is "reject any SQL containing DROP or DELETE". This fails in both directions. It's <strong>bypassable</strong>: comments, odd whitespace, string literals and nested statements can all hide a forbidden operation from a substring scan. And it produces <strong>false positives</strong>: a legitimate query like <code>WHERE purpose = 'debt_consolidation'</code> gets rejected because some reason code contains a banned word.</p>
+<p>Parsing to an AST fixes both. The structure is what gets checked, so hiding is impossible, and a forbidden word appearing in a <em>value</em> is structurally distinct from a forbidden <em>operation</em>. The test suite has cases in both directions.</p>
+</div>
+
+<div class="term">
+<p class="term-name">Execution accuracy</p>
+<p>How the text-to-SQL benchmark is graded. You don't compare the generated SQL <em>text</em> against a reference — two competent analysts write different SQL for the same question, and string comparison would mark a correct answer wrong for choosing a different join order. Instead you <strong>run both</strong> and compare the result sets.</p>
+</div>
+
+<div class="term">
+<p class="term-name">Refusal testing</p>
+<p>Three of the 25 benchmark questions are <em>designed to be unanswerable</em> — one ambiguous, one outside the schema, one reachable only through a blocked table. They count as correct when the agent <strong>declines</strong>. A benchmark of only answerable questions measures fluency and tells you nothing about whether the safety layer works.</p>
+</div>
+
+</section>
+
+<!-- ============================================ -->
+<section id="data">
+<div class="h2-rule"><span class="h2-num">04</span><h2>Where the data comes from</h2></div>
+
+<p>Three sources, none of which ship with the code. All are free.</p>
+
+<h3>1. Lending Club loan extracts (the main dataset)</h3>
+
+<p>Downloaded from Kaggle. Two CSV files arrive:</p>
+
+<div class="tw">
+<table>
+<thead><tr><th>File</th><th>Contains</th><th>Shape</th><th>Has outcomes?</th></tr></thead>
+<tbody>
+<tr><td><code>accepted_2007_to_2018Q4.csv</code></td><td>Funded loans: borrower credit profile, loan terms, and final status</td><td>~2.2M rows, ~150 columns</td><td><span class="pill g">Yes</span></td></tr>
+<tr><td><code>rejected_2007_to_2018Q4.csv</code></td><td>Declined applications: date, amount, risk score, DTI, employment, state</td><td>~27M rows, 9 columns</td><td><span class="pill b">No</span></td></tr>
+</tbody>
+</table>
+</div>
+
+<p>That asymmetry — wide-with-labels versus huge-but-narrow-and-unlabelled — shapes the whole project. The accepted file is the only source of truth about who defaults, but it's a filtered sample. The rejected file is the other side of the decision, with no outcomes because none of them was funded.</p>
+
+<p>The five columns both files share are what make reject inference possible at all: <strong>credit score, debt-to-income, employment length, state, and amount requested</strong>.</p>
+
+<div class="note warn">
+<span class="note-label">Reading detail worth mentioning in an interview</span>
+<p>Schema inference is switched <strong>off</strong> when reading these CSVs, and every column is cast explicitly. Lending Club changed its column formatting over the eleven years it published. If you let a CSV reader guess the type from the first few thousand rows, you get columns that silently truncate or null out further down the file — a bug that produces no error and quietly corrupts your results.</p>
+</div>
+
+<h3>2. FRED macroeconomic data</h3>
+
+<p>FRED is the Federal Reserve Bank of St. Louis's public economic database. Free API key. The project pulls:</p>
+
+<ul>
+  <li><strong>National series:</strong> unemployment rate, 10-year Treasury yield, consumer sentiment, consumer price index (inflation), and credit card delinquency rates.</li>
+  <li><strong>Per-state series:</strong> unemployment rate for the 15 states with the most loan volume.</li>
+</ul>
+
+<p>Why bother? Two identical borrowers, one who borrowed in 2007 just before the financial crisis and one in 2013 during recovery, will default at different rates — and it's not their fault. A model with no economic input blames the borrower for the economy. State-level unemployment matters more than national, because a borrower faces their <em>local</em> labour market.</p>
+
+<div class="note iv">
+<span class="note-label">Point-in-time correctness — a senior-level detail</span>
+<p>Each loan is attached to the economic conditions <strong>of its own origination month</strong>, joined on exact month equality. Not a nearest match, not a forward-fill, not an as-of join that could reach ahead. A loan originated in March 2015 carries March 2015's unemployment rate and nothing later.</p>
+<p>And the test for it doesn't just check the join condition — it <strong>independently recomputes</strong> the expected value from the month key and fails the build on any mismatch. A test written as a check on the join would pass for whatever join the code happened to contain. Recomputing means the test states the requirement and the code has to satisfy it.</p>
+</div>
+
+<h3>3. Supervisory guidance PDFs (for the AI layer)</h3>
+
+<p>You manually place 4–6 regulatory PDFs in <code>data/docs/</code>, totalling 100–200 pages. These are published openly by their issuing bodies. The project was built against:</p>
+
+<ul>
+  <li><strong>Federal Reserve SR 11-7</strong> — guidance on model risk management. The foundational document for how banks must validate models.</li>
+  <li><strong>Basel Committee</strong> — principles for the management of credit risk.</li>
+  <li><strong>OCC Comptroller's Handbook</strong> — retail credit examination material.</li>
+</ul>
+
+<p>These become the knowledge base the AI cites when drafting the validation memo. One document would make retrieval trivial and prove nothing about ranking quality, hence four to six.</p>
+
+<div class="note warn">
+<span class="note-label">Requirement</span>
+<p>The PDFs must have a real text layer. Scanned images produce no extractable text, and the index build deliberately <em>raises an error</em> rather than writing an empty index — failing loudly beats silently building something useless.</p>
+</div>
+
+</section>
+
+<!-- ============================================ -->
+<section id="stack">
+<div class="h2-rule"><span class="h2-num">05</span><h2>Every technology and why it's there</h2></div>
+
+<p>For each tool: what it is, what job it does here, and why it was chosen over the obvious alternative. That last column is what interviewers actually probe.</p>
+
+<h3>Data engineering</h3>
+
+<div class="term">
+<p class="term-name">Polars — CSV to Parquet conversion</p>
+<p><strong>What it is:</strong> A fast dataframe library (like pandas, but written in Rust).</p>
+<p><strong>Job here:</strong> Reading the enormous raw CSVs and writing them out as clean Parquet files.</p>
+<p><strong>Why not pandas:</strong> Polars has a <em>lazy</em> scanner that streams the file in chunks, so peak memory stays flat no matter how big the input. Pandas would need the entire multi-gigabyte file resident in RAM before it could write anything. On the 27-million-row rejected file, that's the difference between working and crashing.</p>
+</div>
+
+<div class="term">
+<p class="term-name">Parquet — the storage format</p>
+<p><strong>What it is:</strong> A columnar file format. Instead of storing row by row, it stores column by column.</p>
+<p><strong>Why it matters:</strong> If your query only needs 3 of 150 columns, a columnar format reads only those 3. It also compresses far better, because similar values sit together. The project uses <code>zstd</code> compression.</p>
+<p><strong>Partitioning:</strong> Files are split into directories by origination year. Every query in this project filters on origination time, so DuckDB can skip entire directories rather than scanning eleven years of history to answer a question about one cohort. This is called <em>partition pruning</em>.</p>
+</div>
+
+<div class="term">
+<p class="term-name">DuckDB — the warehouse</p>
+<p><strong>What it is:</strong> An analytical database that runs inside your own process, as a single file. Think "SQLite, but built for analytics".</p>
+<p><strong>Job here:</strong> The SQL engine everything queries. It reads the Parquet files directly, registered as views.</p>
+<p><strong>Why not Postgres or Snowflake:</strong> DuckDB reads Parquet <em>in place</em> and pushes filters down into the file scan, so registering the data costs nothing and no copy is made. A server-based warehouse would add an operational dependency — a service to install, run, and manage — to a project that runs on one laptop. And since they're <strong>views</strong> not tables, materialising a copy would waste several gigabytes for zero query-time benefit.</p>
+</div>
+
+<div class="term">
+<p class="term-name">dbt — transformation and testing</p>
+<p><strong>What it is:</strong> "Data Build Tool". You write SQL SELECT statements in files; dbt works out the dependency order, runs them, and manages them as a graph. It also runs data-quality tests.</p>
+<p><strong>Job here:</strong> Transforming raw data into clean staging views, then into the final star schema. And running all the data quality tests.</p>
+<p><strong>Why it matters:</strong> The tests live <em>next to</em> the models they constrain and run in the same command. A broken assumption fails the build immediately, rather than surfacing three stages later as a weird model metric that takes a day to trace back.</p>
+</div>
+
+<h3>Modelling</h3>
+
+<div class="term">
+<p class="term-name">optbinning — WOE binning</p>
+<p><strong>What it is:</strong> A specialist library for optimal binning and scorecard construction.</p>
+<p><strong>Job here:</strong> Chopping each variable into bands, computing Weight of Evidence, and enforcing the monotonicity constraint. Also computes Information Value and does feature selection.</p>
+<p><strong>Why not hand-rolled:</strong> Writing binning yourself is easy; getting the <em>monotonicity constraint</em> right is not — and that constraint is precisely the part that makes a scorecard legally defensible. optbinning solves it as a proper constrained optimisation.</p>
+</div>
+
+<div class="term">
+<p class="term-name">scikit-learn — logistic regression and calibration</p>
+<p><strong>What it is:</strong> The standard general-purpose machine learning library for Python.</p>
+<p><strong>Job here:</strong> Two things. The logistic regression that sits on top of the WOE-transformed features and forms the scorecard. And the isotonic regression that calibrates the challenger's probabilities.</p>
+<p><strong>Why logistic regression:</strong> Over WOE-transformed inputs it keeps each attribute's point contribution directly readable, which is the entire point of a scorecard.</p>
+</div>
+
+<div class="term">
+<p class="term-name">LightGBM — the challenger model</p>
+<p><strong>What it is:</strong> A gradient boosting library. It builds hundreds of small decision trees in sequence, each correcting the previous ones' errors.</p>
+<p><strong>Job here:</strong> The challenger — the "what's the best achievable accuracy?" benchmark.</p>
+<p><strong>Why this one:</strong> It handles categorical variables natively (no manual encoding) and fits the full training window in minutes. Cheap enough to rerun the whole champion-challenger comparison whenever an assumption changes.</p>
+</div>
+
+<div class="term">
+<p class="term-name">SHAP — challenger explanation</p>
+<p><strong>What it is:</strong> A method from cooperative game theory for attributing a prediction across its input features. "This prediction was 0.18; FICO pushed it down 0.04, DTI pushed it up 0.07."</p>
+<p><strong>Job here:</strong> Explaining the challenger, since a boosted ensemble is otherwise opaque.</p>
+<p><strong>The point being made:</strong> SHAP is the closest available answer to "why did the model score this applicant that way" — it <em>approximates</em> what the scorecard gives you <em>exactly</em>. That gap is precisely the trade-off the champion-challenger setup is measuring.</p>
+</div>
+
+<h3>Retrieval and generation</h3>
+
+<div class="term">
+<p class="term-name">ChromaDB — vector store</p>
+<p><strong>What it is:</strong> An embedded vector database.</p>
+<p><strong>Job here:</strong> Storing embeddings of the guidance document chunks and answering similarity searches. Uses HNSW indexing with cosine distance.</p>
+<p><strong>Why this one:</strong> Runs in-process with local file persistence — same philosophy as DuckDB, no server to operate.</p>
+</div>
+
+<div class="term">
+<p class="term-name">sentence-transformers — embeddings and reranking</p>
+<p><strong>What it is:</strong> A library of pre-trained text embedding models.</p>
+<p><strong>Job here:</strong> Two models. <code>all-MiniLM-L6-v2</code> turns chunks into embeddings. <code>ms-marco-MiniLM-L-6-v2</code> is the cross-encoder that reranks the shortlist.</p>
+<p><strong>Note:</strong> These download automatically on first run (a few hundred MB) and then run entirely locally — no API cost.</p>
+</div>
+
+<div class="term">
+<p class="term-name">rank-bm25 — keyword search</p>
+<p><strong>What it is:</strong> An implementation of the BM25 ranking function.</p>
+<p><strong>Job here:</strong> The sparse half of hybrid retrieval, catching exact regulatory terminology that embeddings blur.</p>
+</div>
+
+<div class="term">
+<p class="term-name">sqlglot — the SQL guardrail</p>
+<p><strong>What it is:</strong> A SQL parser and transpiler. It turns SQL text into an inspectable syntax tree.</p>
+<p><strong>Job here:</strong> Validating every AI-generated query before it reaches the database.</p>
+<p><strong>Why not a blocklist:</strong> Covered <a href="#genai">above</a> — a blocklist is both bypassable and prone to false positives. An AST check is structural and therefore neither.</p>
+</div>
+
+<div class="term">
+<p class="term-name">Google Gemini (google-genai) — the LLM</p>
+<p><strong>What it is:</strong> Google's large language model, accessed through an API. The project uses <code>gemini-3.5-flash-lite</code> for text-to-SQL and <code>gemini-3.6-flash</code> for the memo, both on the free tier.</p>
+<p><strong>Job here:</strong> Two tasks. Writing SQL from English questions. And drafting the model validation memo from retrieved guidance plus measured metrics.</p>
+<p><strong>Note:</strong> This was originally built against Anthropic's Claude API and swapped to Gemini so it runs on a free key. The code structure is identical — one single-turn text generation call in each place — which is itself a point worth making: the LLM is a swappable component behind a small interface, not the architecture.</p>
+</div>
+
+<div class="term">
+<p class="term-name">pypdf — PDF text extraction</p>
+<p><strong>What it is:</strong> A PDF manipulation library.</p>
+<p><strong>Job here:</strong> Pulling the text layer out of the guidance PDFs so they can be chunked and indexed.</p>
+</div>
+
+<h3>Application and orchestration</h3>
+
+<div class="term">
+<p class="term-name">Streamlit — the front end</p>
+<p><strong>What it is:</strong> A framework for building data web apps in pure Python, no HTML or JavaScript.</p>
+<p><strong>Job here:</strong> The dashboard. Multiple tabs showing vintage curves, model metrics, the profit frontier, stability monitoring, and the copilot.</p>
+<p><strong>Key design choice:</strong> Every tab <em>reads generated artifacts</em> from <code>results/</code> rather than recomputing anything. Opening the app never triggers a model fit. And if an artifact doesn't exist yet, the app shows a one-line notice naming the <code>make</code> target that produces it — a stack trace on a fresh clone is a worse answer than an instruction.</p>
+</div>
+
+<div class="term">
+<p class="term-name">Plotly — interactive charts</p>
+<p><strong>What it is:</strong> A charting library producing interactive (hover, zoom) charts.</p>
+<p><strong>Job here:</strong> The charts inside the Streamlit app.</p>
+</div>
+
+<div class="term">
+<p class="term-name">matplotlib — static figures</p>
+<p><strong>What it is:</strong> The long-standing Python plotting library.</p>
+<p><strong>Job here:</strong> The PNG figures written to <code>results/figures/</code> — the calibration curve, SHAP summary, and profit frontier. Static files that go in a report.</p>
+</div>
+
+<div class="term">
+<p class="term-name">Dagster — orchestration</p>
+<p><strong>What it is:</strong> A data orchestrator. You declare "assets" (things that get produced) and their dependencies; it works out what to run and in what order.</p>
+<p><strong>Job here:</strong> An alternative to running <code>make</code> targets by hand, with a visual dependency graph and a web UI.</p>
+<p><strong>Why it's interesting:</strong> Each Dagster asset <em>shells out to the same entry point the Makefile calls</em>. There's exactly one execution path, so the orchestrated run and the manual run cannot drift apart. And because assets declare real dependencies, changing one thing rebuilds only what it actually invalidates.</p>
+</div>
+
+<div class="term">
+<p class="term-name">pytest — the test suite</p>
+<p><strong>What it is:</strong> Python's standard testing framework.</p>
+<p><strong>Job here:</strong> 54 tests across three files, covering metric correctness, leakage controls, and SQL guardrails.</p>
+<p><strong>Important property:</strong> The tests run against <strong>synthetic fixtures</strong>, so <code>make test</code> works on a fresh clone with no data downloaded. That's a deliberate design decision — tests that require a 10GB download don't get run.</p>
+</div>
+
+<div class="term">
+<p class="term-name">joblib — model persistence</p>
+<p><strong>What it is:</strong> A library for saving Python objects to disk, efficient with numpy arrays.</p>
+<p><strong>Job here:</strong> Saving fitted models to <code>models/*.pkl</code> so later stages can load and reuse them without refitting.</p>
+</div>
+
+<div class="term">
+<p class="term-name">Make — the task runner</p>
+<p><strong>What it is:</strong> A decades-old build tool. A <code>Makefile</code> defines named targets and the commands they run.</p>
+<p><strong>Job here:</strong> The single entry point for everything. <code>make model</code>, <code>make test</code>, <code>make all</code>. It documents the pipeline as executable code rather than as a README someone forgets to update.</p>
+</div>
+
+</section>
+
+<!-- ============================================ -->
+<section id="files">
+<div class="h2-rule"><span class="h2-num">06</span><h2>The file structure, folder by folder</h2></div>
+
+<div class="tree">
+<span class="d">CreditFlow/</span>
+├── <span class="d">src/</span>                       <span class="c">core Python pipeline</span>
+│   ├── <span class="d">ingest/</span>               <span class="c">getting raw data in</span>
+│   │   ├── lending_club.py     <span class="c">CSV → partitioned Parquet</span>
+│   │   ├── fred.py             <span class="c">FRED API → Parquet</span>
+│   │   └── load_warehouse.py   <span class="c">register Parquet as DuckDB views</span>
+│   ├── <span class="d">features/</span>
+│   │   └── build.py            <span class="c">modelling table + leakage assertion + temporal split</span>
+│   ├── <span class="d">models/</span>
+│   │   ├── scorecard.py        <span class="c">WOE scorecard — the CHAMPION</span>
+│   │   ├── scorecard_reduced.py<span class="c">5-column version for scoring rejects</span>
+│   │   ├── challenger.py       <span class="c">LightGBM + calibration + SHAP</span>
+│   │   ├── reject_inference.py <span class="c">fractional-weight augmentation</span>
+│   │   └── metrics.py          <span class="c">AUC, Gini, KS, Brier, score scaling</span>
+│   ├── <span class="d">decision/</span>
+│   │   └── optimiser.py        <span class="c">unit economics, cutoff sweep, swap sets</span>
+│   ├── <span class="d">monitor/</span>
+│   │   └── stability.py        <span class="c">Population Stability Index</span>
+│   └── paths.py                <span class="c">every output path, defined once</span>
+│
+├── <span class="d">dbt_creditflow/</span>           <span class="c">SQL transformation layer</span>
+│   ├── <span class="d">models/staging/</span>       <span class="c">typed, cleaned views over raw</span>
+│   │   ├── stg_loans.sql       <span class="c">accepted loans, target defined here</span>
+│   │   ├── stg_rejected.sql    <span class="c">declined applications</span>
+│   │   ├── stg_macro.sql       <span class="c">national economics, pivoted</span>
+│   │   └── stg_macro_state.sql <span class="c">per-state unemployment</span>
+│   ├── <span class="d">models/marts/</span>         <span class="c">the star schema</span>
+│   │   ├── fct_loan.sql        <span class="c">FACT: one row per funded loan</span>
+│   │   ├── fct_application_funnel.sql <span class="c">FACT: accepted + declined stacked</span>
+│   │   ├── dim_borrower.sql    <span class="c">DIMENSION: credit attributes</span>
+│   │   ├── dim_geography.sql   <span class="c">DIMENSION: state, region</span>
+│   │   └── dim_date.sql        <span class="c">DIMENSION: calendar</span>
+│   └── <span class="d">tests/</span>                <span class="c">data quality guards</span>
+│       ├── assert_no_future_macro.sql          <span class="c">point-in-time guard</span>
+│       ├── assert_state_macro_matches_state.sql
+│       ├── assert_terminal_loans_have_label.sql
+│       ├── assert_realised_loss_within_principal.sql
+│       └── assert_funnel_conserves_applications.sql
+│
+├── <span class="d">rag/</span>                       <span class="c">the AI layer</span>
+│   ├── index.py                <span class="c">PDFs → chunks → embeddings + BM25</span>
+│   ├── retrieve.py             <span class="c">hybrid search + RRF + rerank</span>
+│   ├── sql_guard.py            <span class="c">AST validation (no API, no DB)</span>
+│   ├── text_to_sql.py          <span class="c">English → SQL → validated → executed</span>
+│   ├── eval_text_to_sql.py     <span class="c">25-case benchmark, 3 refusals</span>
+│   └── model_memo.py           <span class="c">grounded validation memo generator</span>
+│
+├── <span class="d">analysis/</span>                  <span class="c">five analytical SQL queries</span>
+│   ├── 01_vintage_curves.sql
+│   ├── 02_macro_attribution.sql
+│   ├── 03_segment_profitability.sql
+│   ├── 04_approval_funnel.sql
+│   ├── 05_cohort_retention.sql
+│   └── run_analysis.py         <span class="c">runs them, exports to results/tables/</span>
+│
+├── <span class="d">app/main.py</span>                <span class="c">Streamlit dashboard</span>
+├── <span class="d">orchestration/</span>             <span class="c">Dagster asset graph</span>
+├── <span class="d">tests/</span>                     <span class="c">54 pytest tests, synthetic fixtures</span>
+├── <span class="d">docs/</span>                      <span class="c">the written reasoning</span>
+│   ├── data.md                 <span class="c">sources, schemas, licensing</span>
+│   ├── modelling.md            <span class="c">target, splits, leakage, champion choice</span>
+│   ├── decision-framework.md   <span class="c">unit economics + every assumption</span>
+│   └── governance.md           <span class="c">monitoring, thresholds, memo, guardrail</span>
+│
+├── <span class="d">data/</span>                      <span class="c">UNTRACKED — raw, parquet, duckdb</span>
+├── <span class="d">results/</span>                   <span class="c">structure tracked, contents regenerated</span>
+├── <span class="d">models/</span>                    <span class="c">UNTRACKED — fitted .pkl artifacts</span>
+├── Makefile                    <span class="c">every command</span>
+├── requirements.txt            <span class="c">pinned dependencies</span>
+└── .env                        <span class="c">UNTRACKED — your API keys</span>
+</div>
+
+<h3>Why the layers are separated like this</h3>
+
+<div class="kv">
+<dt>Why is SQL (dbt) separate from Python (src)?</dt>
+<dd>Set-based work — joining, aggregating, shaping tables — belongs in SQL, where a database engine optimises it. Row-wise and iterative work — fitting a model, sweeping thresholds — belongs in Python. Putting each in its natural place means dbt can run data-quality tests on the shaped data before any Python touches it.</dd>
+
+<dt>Why does <code>src/features/build.py</code> exist separately from the marts?</dt>
+<dd>Because the mart deliberately <em>keeps</em> the post-origination columns — the profitability analysis needs realised cash flows. The modelling frame must never see them. Having a distinct boundary with an assertion on it makes the separation explicit and enforceable, rather than relying on every future query remembering a WHERE clause.</dd>
+
+<dt>Why is <code>sql_guard.py</code> a standalone module with no API client and no DB connection?</dt>
+<dd>So the test suite can exercise the security logic directly, with no API key and no database. Security code you can't easily test is security code that doesn't get tested.</dd>
+
+<dt>Why does <code>paths.py</code> exist?</dt>
+<dd>Every output path derives from one constant per module. This makes a rule enforceable: scripts write to <code>results/</code> and nowhere else. Which in turn makes two questions answerable — did this number come from the current code or a run three weeks ago, and does a fresh clone actually reproduce the work?</dd>
+
+<dt>Why is <code>results/</code> tracked as structure but not contents?</dt>
+<dd>The repository tracks <em>the code that produces results</em>, not the results. A clone regenerates everything rather than inheriting someone else's output. This is a real discipline point: it makes <code>make all</code> the only way a result can come into existence.</dd>
+</div>
+
+<h3>The star schema, explained</h3>
+
+<p>The marts layer uses a <strong>star schema</strong> — the standard warehouse design. One central "fact" table holds the measurements, surrounded by "dimension" tables holding descriptive attributes. Drawn out, it looks like a star.</p>
+
+<div class="tw">
+<table>
+<thead><tr><th>Table</th><th>Type</th><th>One row = </th><th>Holds</th></tr></thead>
+<tbody>
+<tr><td><code>fct_loan</code></td><td><span class="pill n">Fact</span></td><td>one funded loan</td><td>Amounts, rate, term, default flag, cash flows, point-in-time macro</td></tr>
+<tr><td><code>fct_application_funnel</code></td><td><span class="pill n">Fact</span></td><td>one application</td><td>Accepted <em>and</em> declined stacked on shared columns</td></tr>
+<tr><td><code>dim_borrower</code></td><td><span class="pill n">Dimension</span></td><td>one borrower</td><td>FICO, income, DTI, employment, utilisation</td></tr>
+<tr><td><code>dim_geography</code></td><td><span class="pill n">Dimension</span></td><td>one state</td><td>State code, census region</td></tr>
+<tr><td><code>dim_date</code></td><td><span class="pill n">Dimension</span></td><td>one month</td><td>Year, quarter, crisis-period flag</td></tr>
+</tbody>
+</table>
+</div>
+
+<p><strong>The grain point.</strong> "Grain" means what one row represents. <code>fct_loan</code> is at loan grain. <code>fct_application_funnel</code> is at <em>application</em> grain — a different, coarser thing, including applications that never became loans. Keeping them as separate tables rather than forcing them together is correct: mixing grains in one table is one of the most common and most damaging warehouse design errors, because every aggregate silently double-counts.</p>
+
+</section>
+
+<!-- ============================================ -->
+<section id="flow">
+<div class="h2-rule"><span class="h2-num">07</span><h2>The end-to-end flow</h2></div>
+
+<p>Here is the whole system in one picture. Read top to bottom.</p>
+
+<div class="flow">SOURCES
+  Lending Club CSVs          FRED API              Guidance PDFs
+  (accepted + rejected)      (macro series)        (SR 11-7, Basel, OCC)
+         │                        │                        │
+         ▼                        ▼                        │
+┌─────────────────────────────────────────────┐            │
+│  make ingest                                │            │
+│  Polars streams CSV → Parquet,              │            │
+│  partitioned by origination year            │            │
+│  → registered as DuckDB views               │            │
+└─────────────────────────────────────────────┘            │
+         │                                                  │
+         ▼                                                  │
+┌─────────────────────────────────────────────┐            │
+│  make build                                 │            │
+│  dbt: staging views → star schema marts     │            │
+│  + 5 data-quality tests (point-in-time,     │            │
+│    label integrity, conservation)           │            │
+└─────────────────────────────────────────────┘            │
+         │                                                  │
+    ┌────┴─────────────────┬──────────────────┐            │
+    ▼                      ▼                  ▼            │
+┌─────────────┐  ┌──────────────────┐  ┌──────────────┐   │
+│ make        │  │ make model       │  │              │   │
+│ analysis    │  │ features + split │  │              │   │
+│             │  │   ↓              │  │              │   │
+│ 5 SQL       │  │ scorecard  ◄─────┼──┤ CHAMPION     │   │
+│ queries     │  │ challenger ◄─────┼──┤ CHALLENGER   │   │
+│             │  │ reject inference │  │              │   │
+└─────────────┘  └──────────────────┘  └──────────────┘   │
+    │                     │                                │
+    │                     ▼                                │
+    │         ┌─────────────────────────────┐             │
+    │         │  make decide                │             │
+    │         │  cutoff sweep → profit      │             │
+    │         │  swap sets vs incumbent     │             │
+    │         │  PSI stability report       │             │
+    │         └─────────────────────────────┘             │
+    │                     │                                │
+    │                     │        ┌───────────────────────┘
+    │                     │        ▼
+    │                     │  ┌──────────────────────────────┐
+    │                     │  │  make rag                    │
+    │                     └─▶│  index PDFs (dense + BM25)   │
+    │                        │  text-to-SQL + AST guardrail │
+    │                        │  grounded validation memo    │
+    │                        └──────────────────────────────┘
+    │                                    │
+    └────────────┬───────────────────────┘
+                 ▼
+         ┌───────────────┐
+         │   results/    │  metrics · tables · figures · governance
+         └───────────────┘
+                 │
+                 ▼
+         ┌───────────────┐
+         │  make app     │  Streamlit reads artifacts, computes nothing
+         └───────────────┘
+</div>
+
+</section>
+
+<!-- ============================================ -->
+<section id="pipeline">
+<div class="h2-rule"><span class="h2-num">08</span><h2>What each stage does</h2></div>
+
+<p>Each stage below: the command, what it does, what goes in, what comes out, and why it exists.</p>
+
+<div class="stage">
+<div class="stage-head"><span class="stage-n">01</span><span class="stage-cmd">make setup</span><span class="stage-time">~5–10 min</span></div>
+<div class="stage-body">
+<p>Installs the Python dependencies and dbt's packages.</p>
+<div class="io">
+<div><span class="io-label">Input</span><ul><li><code>requirements.txt</code></li><li><code>packages.yml</code></li></ul></div>
+<div><span class="io-label">Output</span><ul><li>Populated virtual environment</li><li><code>dbt_packages/</code> with dbt_utils</li></ul></div>
+</div>
+<p><strong>Why:</strong> Pinned versions mean the project builds the same way on any machine. The pins in this repo needed two fixes to resolve — documented in <a href="#trouble">troubleshooting</a>.</p>
+</div>
+</div>
+
+<div class="stage">
+<div class="stage-head"><span class="stage-n">02</span><span class="stage-cmd">make ingest</span><span class="stage-time">~10–25 min</span></div>
+<div class="stage-body">
+<p>Three scripts run in order. Polars streams the raw CSVs and writes typed Parquet partitioned by origination year. The FRED loader fetches the economic series with retry-and-backoff. Then the warehouse loader registers all three datasets as DuckDB views.</p>
+<div class="io">
+<div><span class="io-label">Input</span><ul><li><code>data/raw/accepted_*.csv</code></li><li><code>data/raw/rejected_*.csv</code></li><li>FRED API (needs key)</li></ul></div>
+<div><span class="io-label">Output</span><ul><li><code>data/parquet/accepted/issue_year=*/</code></li><li><code>data/parquet/rejected/app_year=*/</code></li><li><code>data/parquet/macro/fred_series.parquet</code></li><li><code>data/creditflow.duckdb</code></li></ul></div>
+</div>
+<h4>Decisions worth knowing</h4>
+<ul>
+<li><strong>Schema inference off.</strong> Every column cast explicitly, because the published format changes across years and inference from an opening sample silently truncates columns further down.</li>
+<li><strong>Partition on origination year.</strong> Every downstream query filters on origination time, so DuckDB prunes whole directories instead of scanning eleven years for one cohort.</li>
+<li><strong>FRED requests retry with exponential backoff,</strong> and the combined frame is deduplicated on series and date — so a partial run followed by a rerun produces the same file rather than duplicate rows.</li>
+<li><strong>Registered as views, not tables.</strong> DuckDB reads Parquet directly and pushes filters into the scan; materialising would cost gigabytes for no gain.</li>
+</ul>
+</div>
+</div>
+
+<div class="stage">
+<div class="stage-head"><span class="stage-n">03</span><span class="stage-cmd">make build</span><span class="stage-time">~3–8 min</span></div>
+<div class="stage-body">
+<p>dbt builds the staging views, then the star schema marts, running every data-quality test as it goes. <code>dbt build</code> interleaves models and tests, so a failing assumption stops the pipeline there.</p>
+<div class="io">
+<div><span class="io-label">Input</span><ul><li>DuckDB raw views</li></ul></div>
+<div><span class="io-label">Output</span><ul><li>4 staging views</li><li>5 mart tables (star schema)</li><li>Test results — all must pass</li><li>dbt docs (lineage graph)</li></ul></div>
+</div>
+<h4>The target gets defined here</h4>
+<p><code>stg_loans.sql</code> maps loan status to the label: <strong>Charged Off</strong> and <strong>Default</strong> → 1. <strong>Fully Paid</strong> → 0. Everything else — Current, In Grace Period, the Late buckets — → <strong>null</strong>, and null rows are excluded from modelling.</p>
+<div class="note why">
+<span class="note-label">Why exclude in-flight loans, even though it costs sample size</span>
+<p>A loan 60 days late is not a good loan, but it isn't a charge-off either. Forcing it into either class puts a guess in the target column. And the bias runs <em>one direction</em>: in-flight loans concentrate in the most recent vintages, so treating them as good would systematically flatter exactly the cohorts the out-of-time test is supposed to hold the model accountable on.</p>
+</div>
+<h4>The five data quality tests</h4>
+<div class="tw">
+<table>
+<thead><tr><th>Test</th><th>What it guarantees</th></tr></thead>
+<tbody>
+<tr><td><code>assert_no_future_macro</code></td><td>Independently recomputes expected macro values from the month key. No loan carries economic data from after its origination.</td></tr>
+<tr><td><code>assert_state_macro_matches_state</code></td><td>State unemployment belongs to the borrower's actual state — catches a dropped state predicate that would still populate the column.</td></tr>
+<tr><td><code>assert_terminal_loans_have_label</code></td><td>Every terminal loan has a label; no in-flight loan has one. Enforces the target definition both directions.</td></tr>
+<tr><td><code>assert_realised_loss_within_principal</code></td><td>You cannot lose more than you lent. Arithmetic sanity on the cash flow columns.</td></tr>
+<tr><td><code>assert_funnel_conserves_applications</code></td><td>The funnel fact's row count equals accepted plus declined. Nothing lost or duplicated in the union.</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+
+<div class="stage">
+<div class="stage-head"><span class="stage-n">04</span><span class="stage-cmd">make analysis</span><span class="stage-time">~2–5 min</span></div>
+<div class="stage-body">
+<p>Runs five analytical SQL queries and exports each to CSV. These are business questions answered directly from the warehouse, independent of any model.</p>
+<div class="io">
+<div><span class="io-label">Input</span><ul><li>The mart tables</li></ul></div>
+<div><span class="io-label">Output</span><ul><li><code>vintage_curves.csv</code></li><li><code>macro_attribution.csv</code></li><li><code>segment_profitability.csv</code></li><li><code>approval_funnel.csv</code></li><li><code>cohort_retention.csv</code></li></ul></div>
+</div>
+<div class="tw">
+<table>
+<thead><tr><th>Query</th><th>Question it answers</th></tr></thead>
+<tbody>
+<tr><td>Vintage curves</td><td>How did each cohort's defaults accumulate, compared at equal months on book?</td></tr>
+<tr><td>Macro attribution</td><td>When the default rate moved quarter-on-quarter, was it worse applicants or a worse economy?</td></tr>
+<tr><td>Segment profitability</td><td>Which FICO-band × grade segments actually made money, using <em>realised</em> cash flows?</td></tr>
+<tr><td>Approval funnel</td><td>What share was approved each year, and how big was the credit-quality gap to those declined?</td></tr>
+<tr><td>Cohort retention</td><td>What share of each cohort was still on book at each point?</td></tr>
+</tbody>
+</table>
+</div>
+<div class="note why">
+<span class="note-label">The one to talk about: macro attribution</span>
+<p>It sets the change in default rate against the change in risk-grade mix and the change in state unemployment at origination. That separates <em>"we took on worse applicants"</em> from <em>"we wrote the same applicants into a worse economy"</em> — two problems with completely different fixes.</p>
+<p>And it's honest about its limits: the output is a directional <strong>flag</strong>, not a decomposition. It says which explanation is consistent with the observed movements so the follow-up question is narrower. It does not claim how much of the movement each cause accounts for.</p>
+</div>
+<p>Also note <strong>segment profitability uses realised cash flows</strong>, not modelled economics. It sidesteps every unit-economics assumption, which makes it worth reading <em>against</em> the cutoff sweep as a cross-check.</p>
+</div>
+</div>
+
+<div class="stage">
+<div class="stage-head"><span class="stage-n">05</span><span class="stage-cmd">make model</span><span class="stage-time">~2 min</span></div>
+<div class="stage-body">
+<p>The modelling core. Five scripts in sequence.</p>
+<div class="io">
+<div><span class="io-label">Input</span><ul><li><code>marts.fct_loan</code> + <code>dim_borrower</code></li></ul></div>
+<div><span class="io-label">Output</span><ul><li><code>train/valid/test.parquet</code></li><li><code>scorecard_metrics.csv</code></li><li><code>challenger_metrics.csv</code></li><li><code>scorecard_reduced_metrics.csv</code></li><li><code>information_value.csv</code></li><li><code>reject_inference.csv</code></li><li><code>calibration.png</code>, <code>shap_summary.png</code></li><li>Fitted <code>.pkl</code> artifacts</li></ul></div>
+</div>
+
+<h4>5a · Feature build and the temporal split</h4>
+<p>Pulls origination-time attributes only, runs the leakage assertion, engineers derived features, then splits <strong>by time</strong>:</p>
+<div class="tw">
+<table>
+<thead><tr><th>Split</th><th>Years</th><th>Used for</th></tr></thead>
+<tbody>
+<tr><td><code>train</code></td><td>through 2015</td><td>Fitting bins and coefficients</td></tr>
+<tr><td><code>valid</code></td><td>2016</td><td>Early stopping, probability calibration</td></tr>
+<tr><td><code>test</code></td><td>2017 onward</td><td>Held out entirely — final reporting</td></tr>
+</tbody>
+</table>
+</div>
+<p>The engineered features are all things a lender could compute at application: <strong>loan-to-income</strong>, <strong>instalment burden</strong>, <strong>income versus state median</strong> (reads a salary against local cost of living rather than the national distribution), and <strong>macro stress</strong> (the gap between the borrower's state unemployment and the national rate, isolating local conditions from the cycle everyone faced).</p>
+
+<div class="note why">
+<span class="note-label">Why temporal, not random — two reasons, the second more important</span>
+<p><strong>First:</strong> under a random split the model trains on 2018 loans while scoring 2016 loans. Production never offers that. A model deployed in 2016 has seen nothing after 2016, and any signal from the future leaks straight into the reported metric.</p>
+<p><strong>Second, and the one that matters more:</strong> a random split draws train and test from the same population <em>by construction</em>, so it cannot detect drift — the two samples are the same sample, shuffled. The stability report exists to measure how far the population moved between development and deployment. Against a random split, that measurement is guaranteed to return nothing regardless of what actually happened.</p>
+<p>Note also that validation sits <em>between</em> train and test rather than being carved out of train. Early stopping and calibration both consult it, so both are tuned under the same forward-in-time gap the test window later measures.</p>
+</div>
+
+<h4>The five leakage controls, in data-flow order</h4>
+<ol>
+<li><strong>Terminal-status gating.</strong> Only loans with a realised outcome enter the population, so the target is never a guess.</li>
+<li><strong>Post-origination column exclusion.</strong> <code>BANNED_COLUMNS</code> names every field describing what happened after money moved. The assertion is a <em>set intersection against the frame's actual columns</em>, so it catches a column arriving through a renamed alias or an upstream <code>select *</code> widening — not just one someone adds by hand.</li>
+<li><strong>Point-in-time macro attachment.</strong> Joined on exact month equality in the mart, enforced by independently recomputing the expected value.</li>
+<li><strong>Binning fitted on train only.</strong> Fitting bin edges across the full frame would let the out-of-time distribution influence where the cuts fall — subtle enough to survive most review, and still a leak.</li>
+<li><strong>Calibration fitted on validation, not test.</strong> Calibrating on the sample used to report calibration measures nothing.</li>
+</ol>
+
+<h4>5b · The champion scorecard</h4>
+<p>optbinning bins all 25 features with a monotonicity constraint, selects by Information Value (floor 0.02, cap 1.0, max 15 features), then logistic regression fits on the WOE-transformed inputs. Probabilities are also mapped to a points scale — 20 points to double the odds, anchored at 600 points for 50:1 good:bad odds, and <em>decreasing</em> in risk so higher score means safer, as every downstream reader expects.</p>
+<p>The IV cap of 1.0 is a safety check: a variable <em>too</em> predictive is usually a proxy for the outcome.</p>
+
+<h4>5c · The challenger</h4>
+<p>LightGBM with early stopping watching the validation window, then isotonic regression calibrating the probabilities — fitted on validation, which is held out of tree fitting, so the calibrator isn't learning from its own residuals. SHAP explains it. Calibration curve and SHAP summary both get written as figures.</p>
+
+<h4>5d · Reject inference</h4>
+<p>A reduced scorecard is fitted on only the five shared columns, then used to score a 500,000-row sample of declined applications. Each is carried forward as fractional good and bad weights. The sensitivity table reports the through-the-door default rate across penalties 1.0, 1.25, 1.5, 1.75, 2.0.</p>
+<p>The reduced model is <em>deliberately impoverished</em>. Imputing the twenty missing attributes would manufacture the very signal the exercise is trying to measure. Its weaker discrimination is the honest ceiling: the inference is only as strong as what five shared columns can separate.</p>
+</div>
+</div>
+
+<div class="stage">
+<div class="stage-head"><span class="stage-n">06</span><span class="stage-cmd">make decide</span><span class="stage-time">~1 min</span></div>
+<div class="stage-body">
+<p>Converts probabilities into a business decision, then measures stability.</p>
+<div class="io">
+<div><span class="io-label">Input</span><ul><li>Scored out-of-time frames</li><li>train + test feature frames</li></ul></div>
+<div><span class="io-label">Output</span><ul><li><code>cutoff_sweep_scorecard.csv</code></li><li><code>cutoff_sweep_challenger.csv</code></li><li><code>optimal_cutoffs.csv</code></li><li><code>swap_set_analysis.csv</code></li><li><code>psi_report.csv</code>, <code>psi_by_year.csv</code></li><li><code>profit_frontier.png</code></li></ul></div>
+</div>
+<h4>The unit economics</h4>
+<pre><code>expected revenue = (1 − PD) × funded × rate × term_years × prepay_retention
+expected loss    = PD × funded × LGD
+funding cost     = funded × cost_of_funds × term_years
+expected profit  = revenue − loss − funding cost − opex</code></pre>
+<p>With: <strong>LGD 0.65</strong>, <strong>cost of funds 3.5%</strong>, <strong>opex $120/loan</strong>, <strong>prepayment retention 0.95</strong>, <strong>average balance factor 0.55</strong>. Every one is a named constant in the code, because the conclusion moves with them and a reader needs to see what they'd have to disagree with.</p>
+
+<div class="note iv">
+<span class="note-label">The amortisation point — worth understanding properly</span>
+<p>These are <strong>amortising</strong> instalment loans: the borrower repays principal every month, so the balance declines to zero across the term. The average balance outstanding is therefore roughly <em>half</em> the amount funded, not all of it.</p>
+<p>That matters for all three legs of the calculation. Interest is earned on the declining balance, funding is paid on the declining balance, and a loan that defaults in month 20 has already repaid part of its principal, so the loss is on the balance at default. Charging any of them on full principal for the full term overstates it by about a factor of two.</p>
+<p>And the errors do not cancel: funding cost is a straight subtraction while interest is scaled down by the survival probability. Get this wrong and the model reports that <em>every</em> cutoff loses money, which is how this bug announced itself.</p>
+</div>
+
+<div class="note why">
+<span class="note-label">How the assumptions were validated, not guessed</span>
+<p>The 2012–2014 vintages are old enough that nearly every loan has terminated, so their <strong>realised</strong> net cash flow is a fact rather than a projection: <strong>+11.33%</strong> return on funded amount. Feeding those cohorts through the formula with perfect foresight (setting PD to the actual outcome) should land near that figure.</p>
+<p>It gives <strong>+7.56%</strong> — conservative by about 3.8 percentage points, which is a defensible place to be for a decision model. An earlier version of the formula returned <strong>−0.23%</strong> on the same test, and that gap is what exposed the double-counting: a 0.55 prepayment haircut <em>and</em> a 0.55 balance factor were both charging for early termination.</p>
+<p>This back-test against realised cash flow is the single most useful check in the whole decision layer, because it is the only part that needs no assumptions at all.</p>
+</div>
+<p>The cutoff is swept from 0.02 to 0.60 in steps of 0.005, reporting the <strong>whole frontier</strong> rather than one recommended number.</p>
+
+<div class="note why">
+<span class="note-label">Predicted and realised bad rate both appear — deliberately</span>
+<p>The gap between them at a given cutoff is a calibration check read <em>at the point the decision is actually taken</em>. For this purpose that's more informative than any aggregate calibration statistic, because it tells you whether the model is trustworthy exactly where it's being used.</p>
+</div>
+
+<h4>Which assumption to challenge first</h4>
+<div class="tw">
+<table>
+<thead><tr><th>Assumption</th><th>Effect on the optimum</th><th>Exposure</th></tr></thead>
+<tbody>
+<tr><td>Prepayment retention 0.95</td><td>Flat across all loans, but prepayment concentrates in the <em>best</em> borrowers — the ones a tight cutoff retains. Understates revenue when loose, overstates when tight, biasing toward approving more. Calibrated against realised cash flow rather than assumed.</td><td><span class="pill b">Highest</span></td></tr>
+<tr><td>Average balance factor 0.55</td><td>Scales all three legs at once, so it moves the profit <em>level</em> more than the optimum's location. A level-payment schedule justifies sitting slightly above 0.5. Modelling the real amortisation schedule per loan would remove the approximation entirely.</td><td><span class="pill b">High</span></td></tr>
+<tr><td>LGD 0.65</td><td>Scales the entire loss side. Higher tightens the optimum, lower loosens it. Champion-challenger comparison largely insulated, since both face the same LGD.</td><td><span class="pill b">High</span></td></tr>
+<tr><td>Opex $120 flat</td><td>A flat per-loan charge falls hardest on small loans, pushing the optimum away from low-balance applications regardless of credit quality.</td><td><span class="pill w">Medium</span></td></tr>
+<tr><td>Cost of funds 3.5%</td><td>Near-constant per dollar-year, so it shifts profit level at every cutoff similarly and barely moves the optimum's location.</td><td><span class="pill g">Low</span></td></tr>
+</tbody>
+</table>
+</div>
+
+<h4>The incumbent baseline</h4>
+<p>Comparing a new model against nothing isn't a comparison. The incumbent policy is proxied by the <strong>percentile rank of the priced interest rate</strong> — Lending Club set each coupon from its own grade assignment, so the rate ordering is the closest available stand-in for the risk ranking actually in force. It's a proxy with a known weakness (price reflects competitive positioning and funding conditions too), and it's the honest baseline available.</p>
+
+<h4>Stability monitoring</h4>
+<p>PSI computed per feature and on the model score, with bin edges frozen from the development sample. Empty buckets are floored at a small constant rather than dropped — a bucket the later sample never lands in is a <em>real</em> shift, and dropping it would understate the index in exactly the cases that matter most. <code>psi_by_year.csv</code> breaks drift out by year, distinguishing a step change at a point in time from a gradual trend.</p>
+</div>
+</div>
+
+<div class="stage">
+<div class="stage-head"><span class="stage-n">07</span><span class="stage-cmd">make rag</span><span class="stage-time">~15–45 min</span></div>
+<div class="stage-body">
+<p>The AI layer. Three scripts.</p>
+<div class="io">
+<div><span class="io-label">Input</span><ul><li><code>data/docs/*.pdf</code></li><li>All metric CSVs from earlier stages</li><li><code>GEMINI_API_KEY</code></li></ul></div>
+<div><span class="io-label">Output</span><ul><li><code>chroma_db/</code> — vector index + BM25 corpus</li><li><code>text_to_sql_eval.csv</code></li><li><code>model_validation_memo.md</code></li></ul></div>
+</div>
+<h4>7a · Index</h4>
+<p>PDFs are read, chunked on <em>section boundaries first</em> then by length (800 words, 150 overlap), embedded with MiniLM into ChromaDB, and the same chunks saved as a BM25 corpus. First run downloads the embedding models.</p>
+<h4>7b · Text-to-SQL benchmark</h4>
+<p>25 questions. For each: Gemini generates SQL given the schema → the AST guardrail validates it → it executes read-only → the result set is compared against a hand-written reference query. Three cases must be refused.</p>
+<p>This is the slowest part of the whole pipeline, and not because of computation: it makes 25 sequential API calls, paced and backed off against the free-tier rate limit. Budget 15–45 minutes depending on how hard the quota pushes back.</p>
+<h4>7c · The validation memo</h4>
+<p>Retrieves guidance passages across six topics, loads eight metric files as the only permitted source of numbers, and asks Gemini for a seven-section memo. Every regulatory claim must cite a bracketed source; every number must appear in the supplied evidence; gaps must be stated as gaps.</p>
+<div class="note warn">
+<span class="note-label">The output is a draft, and the docs say so plainly</span>
+<p>It's a starting point for a validator, not a substitute for one, and should be read against the underlying metric files before anything in it is relied upon. Being explicit about this is itself part of the governance posture.</p>
+</div>
+</div>
+</div>
+
+<div class="stage">
+<div class="stage-head"><span class="stage-n">08</span><span class="stage-cmd">make app</span><span class="stage-time">instant</span></div>
+<div class="stage-body">
+<p>Serves the Streamlit dashboard at <code>localhost:8501</code>. Reads artifacts from <code>results/</code>; computes nothing. Missing artifacts produce a notice naming the <code>make</code> target that creates them.</p>
+</div>
+</div>
+
+<div class="stage">
+<div class="stage-head"><span class="stage-n">09</span><span class="stage-cmd">make test</span><span class="stage-time">~2 sec</span></div>
+<div class="stage-body">
+<p>54 tests on synthetic fixtures — no data download needed, works on a fresh clone.</p>
+<div class="tw">
+<table>
+<thead><tr><th>File</th><th>Covers</th></tr></thead>
+<tbody>
+<tr><td><code>test_metrics.py</code></td><td>AUC, Gini, KS, score scaling, and the PSI fixed-edge property — constructs a sample that is internally smooth but shifted, and asserts the index fires</td></tr>
+<tr><td><code>test_leakage.py</code></td><td>The banned-column assertion actually raises; the temporal split boundaries are correct</td></tr>
+<tr><td><code>test_sql_guardrails.py</code></td><td>Forbidden operations hidden where a substring scan would miss them, <em>and</em> safe queries containing forbidden words where a substring scan would wrongly fire</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+
+</section>
+
+<!-- ============================================ -->
+<section id="skills">
+<div class="h2-rule"><span class="h2-num">09</span><h2>The skills this demonstrates</h2></div>
+
+<p>If an interviewer asks "what did you learn building this?", these are the honest answers, grouped by discipline.</p>
+
+<h3>Data engineering</h3>
+<ul>
+<li><strong>Medallion architecture</strong> — the bronze (raw Parquet) → silver (staging views) → gold (marts) progression, with each layer having one job.</li>
+<li><strong>Columnar storage and partition design</strong> — choosing a partition key from actual query patterns rather than by habit.</li>
+<li><strong>Streaming over large files</strong> — lazy evaluation to keep memory flat regardless of input size.</li>
+<li><strong>Dimensional modelling</strong> — star schema, facts versus dimensions, and why mixing grains in one table silently corrupts every aggregate.</li>
+<li><strong>Data quality as code</strong> — tests that live beside the models and fail the build, including tests that <em>independently recompute</em> an invariant rather than restating the implementation.</li>
+<li><strong>Idempotent ingestion</strong> — retry with backoff plus deduplication, so a partial run followed by a rerun lands in the same state.</li>
+<li><strong>Orchestration</strong> — a declarative asset graph that shells out to the same entry points the Makefile uses, so there's one execution path.</li>
+</ul>
+
+<h3>Credit risk and quantitative modelling</h3>
+<ul>
+<li><strong>Scorecard development</strong> — WOE binning, Information Value selection, monotonicity constraints, points scaling.</li>
+<li><strong>The interpretability/accuracy trade-off, decided rather than dodged</strong> — and quantified, by keeping the accurate model as a measured benchmark.</li>
+<li><strong>Temporal validation</strong> — out-of-time splits and the two distinct reasons they beat random splits.</li>
+<li><strong>Leakage identification and prevention</strong> — five layered controls, with the strongest one being an assertion that crashes the build.</li>
+<li><strong>Probability calibration</strong> — understanding that ranking and level are different properties, and that the profit calculation needs the second.</li>
+<li><strong>Selection bias and reject inference</strong> — recognising that accepted-only data describes a filtered population, and correcting for it with fractional weights under an openly stated, unestimable assumption reported across a range.</li>
+<li><strong>Discrimination metrics</strong> — AUC, Gini, KS, Brier, and what each one does and doesn't tell you.</li>
+</ul>
+
+<h3>Decision science</h3>
+<ul>
+<li><strong>Unit economics modelling</strong> — translating a probability into expected profit through exposure, severity, funding and operating cost.</li>
+<li><strong>Threshold optimisation and frontier reporting</strong> — presenting the whole curve, and recognising that a flat peak means the final choice is risk appetite rather than mathematics.</li>
+<li><strong>Swap set analysis</strong> — the volume-controlled comparison a credit committee actually asks for, and why holding volume equal removes a confound that AUC comparison leaves in.</li>
+<li><strong>Sensitivity analysis</strong> — naming every assumption, stating which conclusions move when each is wrong, and ranking them by exposure.</li>
+<li><strong>Baseline construction</strong> — proxying an incumbent policy honestly and acknowledging the proxy's weakness.</li>
+</ul>
+
+<h3>Model governance and MLOps</h3>
+<ul>
+<li><strong>Population stability monitoring</strong> — PSI with fixed development edges, and knowing why recomputed edges return a meaningless zero.</li>
+<li><strong>Drift triage</strong> — distinguishing population shift from relationship shift, because refitting fixes only the second.</li>
+<li><strong>Threshold-to-action mapping</strong> — documented bands with defined responses, plus revalidation triggers beyond the metric itself.</li>
+<li><strong>Reproducibility discipline</strong> — one output root, structure tracked but contents regenerated, so <code>make all</code> is the only way a result exists.</li>
+<li><strong>Documentation as a deliverable</strong> — four docs that record reasoning and rejected alternatives, not just usage.</li>
+</ul>
+
+<h3>Applied GenAI</h3>
+<ul>
+<li><strong>Hybrid retrieval</strong> — dense plus sparse, and why each catches what the other misses.</li>
+<li><strong>Rank fusion over score blending</strong> — RRF, chosen because cosine and BM25 scores aren't comparable and normalising them needs corpus-dependent recalibration.</li>
+<li><strong>Cross-encoder reranking</strong> — the two-stage retrieve-then-rerank pattern, and the cost/precision reason for it.</li>
+<li><strong>Structure-aware chunking</strong> — splitting on sections before length, because separating a rule from its exemption yields answers that are fluent, sourced and wrong.</li>
+<li><strong>Grounding against hallucination</strong> — two separate evidence channels with explicit permission to say "insufficient evidence".</li>
+<li><strong>Treating LLM output as untrusted input</strong> — AST validation, allowlisting, injected row limits, read-only connections — defence in depth, where each layer assumes the one before it failed.</li>
+<li><strong>Evaluating generative systems properly</strong> — execution accuracy rather than text comparison, and refusal cases included because a benchmark of only answerable questions measures fluency, not safety.</li>
+</ul>
+
+<h3>Software engineering</h3>
+<ul>
+<li><strong>Separation of concerns</strong> — SQL for set operations, Python for iteration, with an enforced boundary between them.</li>
+<li><strong>Testable security design</strong> — the guardrail module holds no API client and no DB connection, so the test suite can exercise it directly.</li>
+<li><strong>Tests that run on a fresh clone</strong> — synthetic fixtures, because tests requiring a 10GB download don't get run.</li>
+<li><strong>Single source of truth for configuration</strong> — one constant per path, one entry point per stage.</li>
+<li><strong>Dependency pinning and conflict resolution</strong> — and knowing how to diagnose a transitive version conflict.</li>
+<li><strong>Failing loudly</strong> — empty splits, missing artifacts and scanned PDFs all raise with a message naming the fix, rather than producing something quietly wrong.</li>
+</ul>
+
+</section>
+
+<!-- ============================================ -->
+<section id="interview">
+<div class="h2-rule"><span class="h2-num">10</span><h2>Answers to likely interview questions</h2></div>
+
+<p>Short, usable answers. Say these in your own words.</p>
+
+<h3>"Walk me through this project."</h3>
+<p>Thirty-second version: <em>"It's an end-to-end credit decisioning platform on the Lending Club book. It ingests about 30 million applications plus macroeconomic data into a dimensional warehouse, builds a regulator-style scorecard as the deployed model with a gradient-boosted challenger as a benchmark, converts the probability into an approve/decline policy under stated unit economics, monitors population drift against the development sample, and exposes it through a Streamlit app plus a RAG-grounded copilot that answers questions in SQL and drafts validation documentation. The point of it was the chain around the model, not the model."</em></p>
+
+<h3>"Why is the <em>less accurate</em> model your champion?"</h3>
+<p>Because of what has to happen when an application is declined. The lender owes the applicant a reason and a validator a derivation. A monotonic WOE scorecard gives both by construction — each attribute contributes a fixed number of points, the decline reason is the attribute whose points fell furthest below neutral, and the whole model fits on one page. SHAP <em>approximates</em> that over an ensemble; it doesn't replace it, and in regulated lending the difference is legally material.</p>
+<p>The scorecard also enforces monotonicity, so a better attribute value can never increase modelled risk. A tree ensemble will learn a locally non-monotone response wherever the training data suggests one, and you cannot defend a policy that penalises someone for a <em>better</em> credit score.</p>
+<p>What the challenger contributes is the <strong>bound</strong>: it measures honestly how much discrimination the constrained form actually costs. That's a decision made with a number attached, not an assumption.</p>
+
+<h3>"How do you know you don't have leakage?"</h3>
+<p>Five controls. Terminal-status gating so the target is never a guess. An explicit banned-column list with an assertion that fails the build — implemented as a set intersection against actual columns, so it catches a renamed alias or an upstream <code>select *</code> widening, not just a hand-added column. Point-in-time macro joins enforced by a test that <em>independently recomputes</em> the expected value. Bin edges fitted on train only. And calibration fitted on validation, never test.</p>
+
+<h3>"Why temporal splits?"</h3>
+<p>Two reasons, and the second is the one people miss. First, a random split lets the model train on 2018 while scoring 2016, which production never offers. Second — and more important — a random split draws train and test from the same population by construction, so it <em>cannot detect drift</em>. They're the same sample, shuffled. Since the stability report exists specifically to measure how far the population moved, a random split would guarantee that measurement returned nothing no matter what actually happened.</p>
+
+<h3>"Why calibrate if AUC doesn't change?"</h3>
+<p>Because the decision engine multiplies predicted probability by exposure and LGD to get expected loss, then compares against revenue. That arithmetic needs a probability, not a ranking. A model reporting every probability at twice its true value has a flawless ordering and produces a wrong cutoff. Isotonic regression fixes the level while preserving order — so the discrimination metrics are untouched and the probabilities become usable. Fitted on validation, because calibrating on the sample you report calibration from measures nothing.</p>
+
+<h3>"What's the weakest part of this project?"</h3>
+<p>Good answer to have ready — the docs name several:</p>
+<ul>
+<li><strong>The flat prepayment haircut</strong> is the crudest piece. Prepayment concentrates in the strongest borrowers, exactly the population a tighter cutoff retains, so a flat factor understates revenue when loose and overstates when tight — biasing the recommended approval rate upward. Modelling prepayment as a function of credit quality would be the highest-value refinement.</li>
+<li><strong>Constant LGD at 0.65.</strong> A loan charging off in month four has repaid almost nothing; one at month thirty has returned a substantial fraction. A constant understates the first and overstates the second, and it's the assumption the optimal cutoff is most exposed to.</li>
+<li><strong>No correlated-loss modelling.</strong> The framework treats applications as independent, so it says nothing about a downturn hitting the whole book at once — which, given that the macro features exist <em>because</em> that correlation is real, is its most conspicuous gap.</li>
+<li><strong>Months on book is derived from last payment date,</strong> not a payment schedule. For a prepaid loan that measures when repayment finished, not how long the loan was contractually alive — so the vintage curves are cumulative incidence, not a hazard rate.</li>
+<li><strong>No roll-rate analysis,</strong> because the data can't support one: roll rates need month-by-month delinquency states and the extract publishes one terminal status per loan.</li>
+</ul>
+
+<h3>"How do you stop the AI from making things up?"</h3>
+<p>Grounding on two separate channels. Regulatory statements may only rest on retrieved guidance passages, each cited inline by source. Numbers may only come from the metric files the pipeline wrote. The prompt explicitly instructs the model to state that evidence is insufficient and say what additional testing would settle it, rather than fill the gap.</p>
+<p>That instruction is the reason the module is built that way: an ungrounded model writing validation documentation doesn't fail by producing an awkward sentence, it fails by producing a confidently fabricated test result inside a document a supervisor reads as an assertion of fact. That's a compliance incident, not a software defect.</p>
+
+<h3>"Why not just block dangerous SQL keywords?"</h3>
+<p>Because it fails both ways. It's bypassable through comments, whitespace, string literals and nesting. And it produces false positives — it rejects a legitimate query that merely mentions a forbidden word in a value. So the statement is parsed to a syntax tree and the tree gets checked: root must be a SELECT, no mutating node anywhere beneath it, every table resolving to either a CTE in the same statement or a name on the allowlist, and a row limit injected if absent. The connection is read-only regardless, so a validator bug still can't write. The test suite has cases in both directions.</p>
+
+<h3>"What would you do next?"</h3>
+<ul>
+<li>Model prepayment as a function of credit quality — the highest-value fix to the decision framework.</li>
+<li>Model LGD rather than fixing it, using time-on-book at default and outstanding balance.</li>
+<li>Add a correlated-loss or stress-scenario layer, so the framework says something about a downturn hitting the whole book.</li>
+<li>Add fairness testing across protected-characteristic proxies — a real regulatory requirement this doesn't currently address.</li>
+<li>Expand the text-to-SQL benchmark and add adversarial prompt-injection cases to the guardrail suite.</li>
+</ul>
+
+</section>
+
+<!-- ============================================ -->
+<section id="setup">
+<div class="h2-rule"><span class="h2-num">11</span><h2>Step-by-step: running it yourself</h2></div>
+
+<p>Every click, every command, in order. Nothing is currently set up except the code.</p>
+
+<div class="note warn">
+<span class="note-label">Before you start — the honest expectations</span>
+<p><strong>Disk:</strong> ~15 GB free. The raw CSVs alone are ~10 GB. <strong>Time:</strong> 1.5–3 hours total, mostly unattended downloads and model fitting. <strong>Cost:</strong> free — FRED and Gemini both have free tiers and the embedding models run locally.</p>
+<p>Do the steps in order. Each stage needs the previous one's output.</p>
+</div>
+
+<div class="step">
+<div class="step-n">01</div>
+<div class="step-b">
+<h3>Open a terminal in the project</h3>
+<pre><code>cd /Users/kartikraj/Desktop/CreditFlow</code></pre>
+<p><strong>What you get:</strong> You're in the project folder. Every command below runs from here.</p>
+</div>
+</div>
+
+<div class="step">
+<div class="step-n">02</div>
+<div class="step-b">
+<h3>Create and activate the virtual environment</h3>
+<pre><code>python3.11 -m venv .venv
+source .venv/bin/activate</code></pre>
+<p><strong>Why:</strong> A virtual environment keeps this project's packages separate from your system Python, so pinned versions don't fight with anything else you have installed.</p>
+<p><strong>What you get:</strong> Your prompt now starts with <code>(.venv)</code>. That's how you know it's active.</p>
+<div class="note warn">
+<span class="note-label">Important</span>
+<p>You must run <code>source .venv/bin/activate</code> again <strong>every time you open a new terminal window.</strong> If a command fails with "module not found", this is almost always why.</p>
+</div>
+</div>
+</div>
+
+<div class="step">
+<div class="step-n">03</div>
+<div class="step-b">
+<h3>Get a FRED API key</h3>
+<ol>
+<li>Go to <strong>https://fredaccount.stlouisfed.org/apikeys</strong></li>
+<li>Click <strong>"Create New Account"</strong> if you don't have one — email and password only, no payment details.</li>
+<li>Verify your email, then sign in.</li>
+<li>On the API Keys page, click <strong>"Request API Key"</strong>.</li>
+<li>In the short form, describe the use — "personal data analysis project" is fine. Tick the terms box and submit.</li>
+<li>Your key appears immediately: a 32-character lowercase string. <strong>Copy it.</strong></li>
+</ol>
+<p><strong>What you get:</strong> A free key with no usage limits that matter here.</p>
+</div>
+</div>
+
+<div class="step">
+<div class="step-n">04</div>
+<div class="step-b">
+<h3>Get a Gemini API key (free tier)</h3>
+<ol>
+<li>Go to <strong>https://aistudio.google.com/apikey</strong></li>
+<li>Sign in with any Google account.</li>
+<li>Accept the terms if prompted.</li>
+<li>Click <strong>"Create API key"</strong>.</li>
+<li>If asked to pick a project, choose <strong>"Create API key in new project"</strong>.</li>
+<li>A key starting with <code>AIza…</code> appears. <strong>Copy it now</strong> — it's easiest to grab at this moment.</li>
+</ol>
+<p><strong>What you get:</strong> A free-tier key.</p>
+<div class="note warn">
+<span class="note-label">The quota limit that will bite you</span>
+<p>The free tier allows <strong>20 requests per day, per model</strong> (quota id <code>GenerateRequestsPerDayPerProjectPerModel-FreeTier</code>). The text-to-SQL benchmark alone needs 25 calls, so <strong>it cannot complete on a single model.</strong></p>
+<p>The quota is counted <em>per model</em>, which is the way out: the benchmark and the memo are pointed at different models on purpose. If a run comes back with a wall of <code>429 RESOURCE_EXHAUSTED</code>, the score is meaningless — rerun against a model whose daily allowance is unspent rather than reading it as a result. Models also get retired; if you see <code>404 NOT_FOUND</code>, list the available models and pick a current one.</p>
+</div>
+<div class="note warn">
+<span class="note-label">Never commit this key</span>
+<p>It goes in <code>.env</code>, which is already in <code>.gitignore</code>. Don't paste it into any tracked file.</p>
+</div>
+</div>
+</div>
+
+<div class="step">
+<div class="step-n">05</div>
+<div class="step-b">
+<h3>Create your .env file</h3>
+<pre><code>cp .env.example .env</code></pre>
+<p>Then open <code>.env</code> in your editor and paste both keys in, with no quotes and no spaces around the <code>=</code>:</p>
+<pre><code>FRED_API_KEY=your_32_character_fred_key_here
+GEMINI_API_KEY=AIza_your_gemini_key_here</code></pre>
+<p><strong>What you get:</strong> The scripts load these automatically via <code>python-dotenv</code>. Nothing else needs configuring.</p>
+</div>
+</div>
+
+<div class="step">
+<div class="step-n">06</div>
+<div class="step-b">
+<h3>Install dependencies</h3>
+<pre><code>make setup</code></pre>
+<p><strong>What this does:</strong> Installs <code>requirements.txt</code> into <code>.venv</code>, creates a <em>second</em> environment <code>.venv-dbt</code> from <code>requirements-dbt.txt</code>, then runs <code>dbt deps</code>.</p>
+<p><strong>What you get:</strong> Two environments. Takes 5–10 minutes. One warning about <code>dbt-duckdb</code> being a "yanked version" is expected and harmless.</p>
+<p><strong>Verify it worked:</strong></p>
+<pre><code>pip check        <span class="cmt"># expect: "No broken requirements found."</span></code></pre>
+
+<div class="note warn">
+<span class="note-label">Why there are two environments — a real dependency conflict</span>
+<p>This is not tidiness, it is forced. Three requirements collide and cannot all hold at once:</p>
+<ul>
+<li><code>optbinning</code> (the scorecard binner) needs <code>ortools &lt; 9.12</code> — 9.12 changed the solver API it calls.</li>
+<li><code>ortools ≤ 9.11</code> needs <code>protobuf &lt; 5.27</code>.</li>
+<li><code>dbt-core</code>'s generated protobuf code needs <code>protobuf ≥ 5.27</code>.</li>
+</ul>
+<p>The failure mode is nasty, which is why this is worth knowing. With a mismatched pair installed, nothing errors at import — instead <code>optbinning</code>'s CP-SAT solver <strong>hangs forever</strong> inside <code>Solve()</code>, ignoring even its own time limit. It looks exactly like a slow model fit. The giveaway is the process sitting at ~1% CPU with a few MB of memory: it is not computing, it is wedged.</p>
+<p>So the modelling stack lives in <code>.venv</code> with <code>ortools 9.11</code> + <code>protobuf 5.26.1</code>, and dbt plus Dagster live in <code>.venv-dbt</code> with <code>protobuf 5.29</code>. The <code>Makefile</code> points each target at the interpreter it needs, so <strong>you never switch environments by hand</strong> — <code>make build</code> and <code>make model</code> both work from your normal <code>.venv</code>.</p>
+</div>
+</div>
+</div>
+
+<div class="step">
+<div class="step-n">07</div>
+<div class="step-b">
+<h3>Prove the environment works before downloading 10 GB</h3>
+<pre><code>make test</code></pre>
+<p><strong>Why do this now:</strong> The test suite runs on synthetic fixtures and needs no data. If it passes, your environment is sound. Finding out after a 40-minute download that something was broken is much worse.</p>
+<p><strong>What you get:</strong> <code>54 passed in ~15s</code>. If you see this, everything downstream is just data and time.</p>
+</div>
+</div>
+
+<div class="step">
+<div class="step-n">08</div>
+<div class="step-b">
+<h3>Set up Kaggle and download the loan data</h3>
+<p>First get your Kaggle credentials:</p>
+<ol>
+<li>Go to <strong>https://www.kaggle.com</strong> and sign in (or register — free).</li>
+<li>Click your <strong>profile picture, top right</strong> → <strong>"Settings"</strong>.</li>
+<li>Scroll to the <strong>"API"</strong> section.</li>
+<li>Click <strong>"Create New Token"</strong>.</li>
+<li>A file called <code>kaggle.json</code> downloads to your Downloads folder.</li>
+</ol>
+<p>Now install it where the Kaggle CLI looks for it:</p>
+<pre><code>mkdir -p ~/.kaggle
+mv ~/Downloads/kaggle.json ~/.kaggle/
+chmod 600 ~/.kaggle/kaggle.json</code></pre>
+<p><strong>Why <code>chmod 600</code>:</strong> It makes the file readable only by you. The Kaggle CLI warns loudly if the permissions are open.</p>
+<p>Then download the dataset:</p>
+<pre><code>mkdir -p data/raw
+kaggle datasets download -d wordsforthewise/lending-club -p data/raw --unzip</code></pre>
+<div class="note warn">
+<span class="note-label">You may need to accept the dataset terms first</span>
+<p>If this fails with a 403, open <strong>https://www.kaggle.com/datasets/wordsforthewise/lending-club</strong> in a browser, click <strong>"Download"</strong> once to trigger the terms acceptance, then rerun the command.</p>
+</div>
+<p><strong>What you get:</strong> Two CSVs in <code>data/raw/</code> — about 10 GB after unzipping. This takes 15–40 minutes depending on your connection.</p>
+<p><strong>Verify:</strong></p>
+<pre><code>ls -lh data/raw/</code></pre>
+<p>You should see <code>accepted_2007_to_2018Q4.csv</code> and <code>rejected_2007_to_2018Q4.csv</code>.</p>
+</div>
+</div>
+
+<div class="step">
+<div class="step-n">09</div>
+<div class="step-b">
+<h3>Download the supervisory guidance PDFs</h3>
+<pre><code>mkdir -p data/docs</code></pre>
+<p>Now get 4–6 regulatory PDFs. Search for these by name and download the official PDF from the issuing body's own site:</p>
+<ul>
+<li><strong>"Federal Reserve SR 11-7 Supervisory Guidance on Model Risk Management"</strong> — the essential one. From federalreserve.gov.</li>
+<li><strong>"Basel Committee Principles for the Management of Credit Risk"</strong> — from bis.org.</li>
+<li><strong>"OCC Comptroller's Handbook Retail Credit"</strong> — from occ.gov.</li>
+<li><strong>"OCC Model Risk Management Comptroller's Handbook"</strong> — also occ.gov.</li>
+<li>Optionally: <strong>"CFPB Adverse Action Notice ECOA"</strong> guidance, or <strong>Basel "Sound Credit Risk Assessment and Valuation for Loans"</strong>.</li>
+</ul>
+<p>Save them all into <code>data/docs/</code>. Aim for 100–200 pages total.</p>
+<div class="note warn">
+<span class="note-label">Two requirements</span>
+<p><strong>They must be real text PDFs, not scans.</strong> Test this: open one and try to select a sentence with your cursor. If you can highlight the words, it has a text layer. If it behaves like an image, it won't work — the index build will raise an error rather than silently produce nothing.</p>
+<p><strong>Use at least four.</strong> One document makes retrieval trivial and proves nothing about ranking quality.</p>
+</div>
+<p><strong>Verify:</strong></p>
+<pre><code>ls data/docs/</code></pre>
+</div>
+</div>
+
+<div class="step">
+<div class="step-n">10</div>
+<div class="step-b">
+<h3>Ingest — raw files into the warehouse</h3>
+<pre><code>make ingest</code></pre>
+<p><strong>What this does:</strong> Streams the CSVs into partitioned Parquet, fetches the FRED economic series, and registers everything as DuckDB views.</p>
+<p><strong>What you get:</strong> Printed row counts, then <code>data/creditflow.duckdb</code> exists. Takes 10–25 minutes.</p>
+<p><strong>Why it matters:</strong> This is the bronze layer. Everything downstream reads from here, and nothing reads the CSVs again.</p>
+<p><strong>Verify:</strong></p>
+<pre><code>ls data/parquet/accepted/     <span class="cmt"># expect issue_year=2007 … 2018 directories</span>
+ls -lh data/creditflow.duckdb</code></pre>
+</div>
+</div>
+
+<div class="step">
+<div class="step-n">11</div>
+<div class="step-b">
+<h3>Build — the star schema, with tests</h3>
+<pre><code>make build</code></pre>
+<p><strong>What this does:</strong> dbt builds the 4 staging views and 5 mart tables, running all 5 data-quality tests interleaved. Then generates the docs/lineage graph.</p>
+<p><strong>What you get:</strong> A line per model and per test, ending in a <code>PASS=… WARN=0 ERROR=0</code> summary. Takes 3–8 minutes.</p>
+<p><strong>Why it matters:</strong> This is the first point where the data is <em>verified</em>, not just loaded. If the point-in-time macro test fails here, you'd be modelling on leaked data.</p>
+<div class="note warn">
+<span class="note-label">If a test fails, stop</span>
+<p>Don't proceed to modelling. A failing test here means a real data problem, and every number downstream would be built on it. Read which test failed and what it checks (table in <a href="#pipeline">stage 03</a>).</p>
+</div>
+</div>
+</div>
+
+<div class="step">
+<div class="step-n">12</div>
+<div class="step-b">
+<h3>Analysis — the five business questions</h3>
+<pre><code>make analysis</code></pre>
+<p><strong>What you get:</strong> Five CSVs in <code>results/tables/</code>. Takes 2–5 minutes.</p>
+<p><strong>Why it matters:</strong> These answer real questions with no model involved — vintage performance, whether defaults came from worse applicants or a worse economy, which segments actually made money. Worth reading before any modelling, because they tell you what the model has to beat.</p>
+<p><strong>Have a look:</strong></p>
+<pre><code>head -5 results/tables/macro_attribution.csv</code></pre>
+</div>
+</div>
+
+<div class="step">
+<div class="step-n">13</div>
+<div class="step-b">
+<h3>Model — scorecards, challenger, reject inference</h3>
+<pre><code>make model</code></pre>
+<p><strong>What this does:</strong> Builds the feature table with the leakage assertion, splits it temporally, fits the champion scorecard, the reduced scorecard, the calibrated LightGBM challenger, and runs reject inference.</p>
+<p><strong>What you get:</strong> The split row counts printed, then metric CSVs in <code>results/metrics/</code>, two figures in <code>results/figures/</code>, and fitted <code>.pkl</code> files in <code>models/</code>. This is the longest stage — 20–45 minutes. The SHAP computation is the slow part.</p>
+<p><strong>Why it matters:</strong> This is the modelling core. The first thing to read is <code>scorecard_metrics.csv</code> against <code>challenger_metrics.csv</code> — that comparison is the project's central finding.</p>
+<p><strong>Look at your results:</strong></p>
+<pre><code>cat results/metrics/scorecard_metrics.csv
+cat results/metrics/challenger_metrics.csv</code></pre>
+<p>Expect AUC roughly 0.68–0.72 on <code>test_oot</code>. That is a <em>normal, good</em> number for consumer credit — if you'd seen 0.95, that would mean leakage, not success.</p>
+</div>
+</div>
+
+<div class="step">
+<div class="step-n">14</div>
+<div class="step-b">
+<h3>Decide — cutoffs, swap sets, stability</h3>
+<pre><code>make decide</code></pre>
+<p><strong>What you get:</strong> Cutoff sweeps for both models, the optimal-cutoff extract, swap set analysis, the PSI report plus its by-year breakdown, and <code>profit_frontier.png</code>. Takes 3–6 minutes.</p>
+<p><strong>Why it matters:</strong> This is where a probability becomes a business answer. Open <code>results/figures/profit_frontier.png</code> and look at the shape near the peak — if it's flat, several approval rates are nearly equally profitable and the choice is risk appetite.</p>
+<p><strong>Then read the stability report:</strong></p>
+<pre><code>cat results/metrics/psi_report.csv</code></pre>
+<p>Pay attention to the <code>MODEL_SCORE</code> row specifically. Given the 2015→2017+ gap, expect genuine drift — that's the realistic and interesting outcome, not a failure.</p>
+</div>
+</div>
+
+<div class="step">
+<div class="step-n">15</div>
+<div class="step-b">
+<h3>RAG — index, benchmark, memo</h3>
+<pre><code>make rag</code></pre>
+<p><strong>What this does:</strong> Chunks and indexes your PDFs, runs the 25-case text-to-SQL benchmark, and drafts the validation memo.</p>
+<p><strong>What you get:</strong> <code>chroma_db/</code>, <code>results/governance/text_to_sql_eval.csv</code>, and <code>results/governance/model_validation_memo.md</code>. Takes 10–20 minutes — the first run also downloads the embedding models (a few hundred MB).</p>
+<p><strong>Why it matters:</strong> This is the layer that makes the system usable by someone who doesn't write SQL, and it demonstrates the grounding and guardrail patterns.</p>
+<p><strong>Read your memo:</strong></p>
+<pre><code>cat results/governance/model_validation_memo.md</code></pre>
+<p>Check that every number in it appears in your actual metric files. That's the grounding working — and verifying it is exactly the review a validator would do.</p>
+</div>
+</div>
+
+<div class="step">
+<div class="step-n">16</div>
+<div class="step-b">
+<h3>Launch the dashboard</h3>
+<pre><code>make app</code></pre>
+<p><strong>What you get:</strong> Streamlit starts and prints a local URL, normally <strong>http://localhost:8501</strong>. It usually opens your browser automatically; if not, copy that URL into a browser.</p>
+<p>Click through every tab. Each one reads the artifacts you just generated. Press <code>Ctrl+C</code> in the terminal to stop the server.</p>
+<p><strong>Why it matters:</strong> This is what you'd screen-share in an interview. Know which tab shows what, and be ready to explain the profit frontier's shape and the PSI verdicts.</p>
+</div>
+</div>
+
+<div class="step">
+<div class="step-n">17</div>
+<div class="step-b">
+<h3>Try the copilot directly</h3>
+<pre><code>python -m rag.text_to_sql "What is the default rate by FICO band?"</code></pre>
+<p><strong>What you get:</strong> The generated SQL printed, then the result table.</p>
+<p>Now test the guardrail deliberately:</p>
+<pre><code>python -m rag.text_to_sql "Delete all loans from the table"</code></pre>
+<p>It should <strong>refuse</strong>. That refusal is the safety layer doing its job, and demonstrating it live is more convincing than describing it.</p>
+</div>
+</div>
+
+<div class="note iv">
+<span class="note-label">Shortcut</span>
+<p>Once the raw data and PDFs are in place, <code>make all</code> runs ingest → build → analysis → model → decide → rag in order. Running the stages individually the first time is better, because if something fails you know exactly where.</p>
+</div>
+
+</section>
+
+<!-- ============================================ -->
+<section id="results">
+<div class="h2-rule"><span class="h2-num">12</span><h2>The results from a real run</h2></div>
+
+<p>These are the actual numbers this pipeline produced. Know them — an interviewer will ask what your model scored, and "around 0.70 AUC out of time, and here is why that is the right answer" is a far stronger response than reaching for the file.</p>
+
+<h3>Champion against challenger</h3>
+
+<div class="tw">
+<table>
+<thead><tr><th>Model</th><th class="num">AUC</th><th class="num">Gini</th><th class="num">KS</th><th class="num">Brier</th></tr></thead>
+<tbody>
+<tr><td>Scorecard — <strong>champion</strong></td><td class="num">0.6966</td><td class="num">0.3932</td><td class="num">0.2853</td><td class="num">0.15556</td></tr>
+<tr><td>LightGBM — challenger</td><td class="num">0.7100</td><td class="num">0.4200</td><td class="num">0.3073</td><td class="num">0.15312</td></tr>
+<tr><td>Reduced scorecard — 5 columns</td><td class="num">0.6374</td><td class="num">0.2747</td><td class="num">0.1985</td><td class="num">0.16264</td></tr>
+</tbody>
+</table>
+</div>
+
+<p>All figures on the out-of-time window (2017–18), never seen during fitting. <strong>The challenger wins by 1.34 AUC points.</strong> That number <em>is</em> the project's central result: it is the measured price of choosing a model you can explain to a declined applicant. Not an assumption — a measurement.</p>
+
+<div class="note iv">
+<span class="note-label">Why ~0.70 is the right answer, not a disappointing one</span>
+<p>Consumer credit models land at 0.65–0.72 on out-of-time data. If you had seen 0.95, the correct reaction would be alarm, not celebration: it would mean a post-origination column leaked into the features. The leakage controls exist to keep this number honest, and a believable 0.70 is evidence they worked.</p>
+</div>
+
+<h3>Swap sets — the strongest result here</h3>
+
+<div class="tw">
+<table>
+<thead><tr><th class="num">Approval rate</th><th class="num">Swap-in bad rate</th><th class="num">Swap-out bad rate</th><th class="num">Improvement</th></tr></thead>
+<tbody>
+<tr><td class="num">50%</td><td class="num">15.48%</td><td class="num">24.57%</td><td class="num">+9.09 pp</td></tr>
+<tr><td class="num">65%</td><td class="num">20.20%</td><td class="num">30.17%</td><td class="num">+9.97 pp</td></tr>
+<tr><td class="num">80%</td><td class="num">24.93%</td><td class="num">37.09%</td><td class="num">+12.16 pp</td></tr>
+</tbody>
+</table>
+</div>
+
+<p>Read the middle row: at the same approval volume, the applications the challenger lets in that the incumbent rejected default at <strong>20.2%</strong>, while the ones it turns away default at <strong>30.2%</strong>. It is swapping bad risk out for good risk at matched volume, which is the question a credit committee actually asks and one an AUC comparison cannot answer.</p>
+
+<h3>Stability — and the subtle part</h3>
+
+<div class="tw">
+<table>
+<thead><tr><th>Feature</th><th class="num">PSI</th><th>Verdict</th></tr></thead>
+<tbody>
+<tr><td><code>state_unemployment_at_origination</code></td><td class="num">9.8432</td><td><span class="pill b">Significant</span></td></tr>
+<tr><td><code>macro_stress</code></td><td class="num">2.5894</td><td><span class="pill b">Significant</span></td></tr>
+<tr><td><code>revolving_utilisation</code></td><td class="num">0.1876</td><td><span class="pill w">Moderate</span></td></tr>
+<tr><td><code>interest_rate</code></td><td class="num">0.1043</td><td><span class="pill w">Moderate</span></td></tr>
+<tr><td><strong><code>MODEL_SCORE</code></strong></td><td class="num">0.0079</td><td><span class="pill g">Stable</span></td></tr>
+</tbody>
+</table>
+</div>
+
+<p>The macro features drift enormously, and that is genuine rather than a bug: training spans 2007–15 including the financial crisis, while the test window is 2017–18 in a recovery. State unemployment really was a different variable in those two periods.</p>
+
+<p><strong>But the row that governs the decision is <code>MODEL_SCORE</code> at 0.0079 — stable.</strong> Those macro variables fell below the 0.02 information-value floor and never entered the scorecard, so their drift cannot move the approved population. This is exactly the distinction <code>docs/governance.md</code> insists on: a feature can move without changing the decision, while a moving <em>score</em> means the approved population changed with nobody authorising it. Here the score held.</p>
+
+<h3>Decision</h3>
+
+<div class="tw">
+<table>
+<thead><tr><th>Model</th><th class="num">Optimal cutoff</th><th class="num">Approval rate</th><th class="num">Expected profit</th></tr></thead>
+<tbody>
+<tr><td>Scorecard</td><td class="num">0.575</td><td class="num">99.9%</td><td class="num">$212.1M</td></tr>
+<tr><td>Challenger</td><td class="num">0.490</td><td class="num">93.8%</td><td class="num">$70.3M</td></tr>
+</tbody>
+</table>
+</div>
+
+<p>The profit curve is <strong>flat near its peak</strong> — the challenger runs $68.9M → $70.1M → $70.2M → $69.3M across a wide band of cutoffs. That flatness is the finding worth quoting: several approval rates are within noise of optimal, so the final choice is a risk-appetite decision rather than a mathematical one. Quoting the peak to three decimals would be false precision.</p>
+
+<div class="note warn">
+<span class="note-label">Be ready to be challenged on the very high approval rates</span>
+<p>Both optima approve almost everyone, which looks implausible for a lender. The honest answer has two parts.</p>
+<p>First, the applications being scored have <em>already passed Lending Club's own screen</em> — this is the accepted population, not the through-the-door population, so the genuinely bad applicants were filtered out before this data existed. That is the same selection bias reject inference exists to measure.</p>
+<p>Second, at these unit economics the interest earned on a 13.8% average coupon covers the expected loss even in the riskiest decile, which the realised data supports: grade G loans in the seasoned 2013 cohort returned <strong>+19.7%</strong> against grade A's +8.7%. Risk-based pricing was doing its job. A capital requirement or concentration limit — neither of which this framework models, and both named in the limitations — would tighten the answer considerably.</p>
+</div>
+
+<h3>Reject inference and the copilot</h3>
+
+<p><strong>Reject inference:</strong> 500,000 declined applications scored, reported across rejection penalties 1.0 to 2.0 rather than defending one value, because that multiplier cannot be estimated from this data.</p>
+
+<p><strong>Text-to-SQL benchmark: 19/25 = 76%</strong>, with <strong>all 3 refusal cases passing</strong> — the agent correctly declined the ambiguous question, the out-of-schema one, and the off-allowlist table request. Of the six failures, the instructive one dropped <code>WHERE is_terminal</code> and so averaged over loans still in flight: a quiet, plausible-looking error that produced $14,598 instead of $13,879. That is precisely the class of mistake the benchmark exists to catch, and 76% with honest failures is a more credible number than a suspicious 100%.</p>
+
+<p><strong>Validation memo:</strong> 146 lines across all seven required sections, with 18 inline citations to the supervisory PDFs. Every number in it was checked against the metric files — AUC 0.6966, challenger 0.7100, PSI 9.8432 — and none was fabricated. The memo also independently spotted the <code>MODEL_SCORE</code> point above, which is the grounding design working as intended.</p>
+
+</section>
+
+<!-- ============================================ -->
+<section id="github">
+<div class="h2-rule"><span class="h2-num">13</span><h2>Pushing results to GitHub</h2></div>
+
+<p>Here's the thing to understand first, because it changes what you should do.</p>
+
+<div class="note warn">
+<span class="note-label">The repository is deliberately designed NOT to contain results</span>
+<p><code>.gitignore</code> excludes <code>data/</code>, <code>models/</code>, <code>chroma_db/</code>, every <code>*.csv</code> and <code>*.png</code>, and the contents of <code>results/</code>. Only the folder structure and <code>results/README.md</code> are tracked.</p>
+<p>This is a stated design decision, not an oversight. From the README: <em>"the repository tracks the code that produces results, not the results themselves, so a clone reproduces all of them rather than inheriting someone else's run."</em> It makes two questions answerable — did this number come from current code or a run three weeks ago, and does a clone actually reproduce the work?</p>
+<p>So <strong>force-committing your CSVs would undercut a design choice you'd otherwise want to defend in an interview.</strong> I'd recommend against it.</p>
+</div>
+
+<h3>What I'd recommend instead</h3>
+
+<p>Commit the dependency fixes (real code improvements), and present results as a short written summary rather than raw files.</p>
+
+<div class="step">
+<div class="step-n">01</div>
+<div class="step-b">
+<h3>Check what's actually changed</h3>
+<pre><code>git status
+git diff</code></pre>
+<p>You should see modifications to <code>requirements.txt</code>, <code>.env.example</code>, <code>README.md</code>, <code>rag/text_to_sql.py</code>, and <code>rag/model_memo.py</code> — the Gemini swap and the dependency fixes.</p>
+<p><strong>Check nothing sensitive is there.</strong> Confirm <code>.env</code> does <em>not</em> appear in the list. If it does, stop and fix <code>.gitignore</code> before going further.</p>
+</div>
+</div>
+
+<div class="step">
+<div class="step-n">02</div>
+<div class="step-b">
+<h3>Commit the code changes</h3>
+<pre><code>git add requirements.txt .env.example README.md rag/text_to_sql.py rag/model_memo.py
+git status</code></pre>
+<p>Review that list once more, then commit:</p>
+<pre><code>git commit -m "Swap LLM provider to Gemini and fix dependency resolution
+
+Replaces the Anthropic SDK with google-genai so the copilot and memo
+generator run on a free-tier key. Also resolves two pre-existing pin
+conflicts that blocked installation: optbinning 0.19 capped numpy below 2,
+and the newer ortools it pulls caps protobuf below dbt-core's floor."</code></pre>
+<p><strong>Why name specific files rather than <code>git add .</code>:</strong> It prevents accidentally staging a key file, a large binary, or local scratch output.</p>
+</div>
+</div>
+
+<div class="step">
+<div class="step-n">03</div>
+<div class="step-b">
+<h3>Connect to GitHub, if you haven't</h3>
+<p>Check first:</p>
+<pre><code>git remote -v</code></pre>
+<p>If that prints nothing, you need to create the repository:</p>
+<ol>
+<li>Go to <strong>https://github.com/new</strong></li>
+<li><strong>Repository name:</strong> <code>CreditFlow</code></li>
+<li><strong>Description:</strong> something like "Credit risk analytics and decisioning platform with model governance and a RAG copilot"</li>
+<li>Choose <strong>Public</strong> (you want this visible to interviewers).</li>
+<li><strong>Do not</strong> tick "Add a README", "Add .gitignore", or "Choose a license" — you already have all three, and adding them creates a conflict.</li>
+<li>Click <strong>"Create repository"</strong>.</li>
+<li>On the next page, copy the HTTPS URL under "…or push an existing repository".</li>
+</ol>
+<pre><code>git remote add origin https://github.com/YOUR_USERNAME/CreditFlow.git</code></pre>
+</div>
+</div>
+
+<div class="step">
+<div class="step-n">04</div>
+<div class="step-b">
+<h3>Push</h3>
+<pre><code>git push -u origin main</code></pre>
+<p>If prompted for a password, GitHub needs a <strong>personal access token</strong>, not your account password:</p>
+<ol>
+<li>Go to <strong>https://github.com/settings/tokens</strong></li>
+<li><strong>"Generate new token"</strong> → <strong>"Generate new token (classic)"</strong></li>
+<li>Name it <code>CreditFlow push</code>, set an expiry, tick the <strong><code>repo</code></strong> scope.</li>
+<li>Generate, copy the token, and paste it as the password when git asks.</li>
+</ol>
+<p><strong>What you get:</strong> Your code on GitHub. The <code>-u</code> sets the upstream so later pushes are just <code>git push</code>.</p>
+</div>
+</div>
+
+<div class="step">
+<div class="step-n">05</div>
+<div class="step-b">
+<h3>Add a results summary — the part that actually helps you</h3>
+<p>This is the high-value step. Create a file called <code>RESULTS.md</code> recording what your run produced. Fill in your real numbers:</p>
+<pre><code><span class="cmt"># Run results</span>
+
+Generated by `make all` on YYYY-MM-DD.
+Artifacts are not committed by design — see results/README.md.
+
+<span class="cmt">## Model performance (out-of-time, 2017+)</span>
+
+| Model              | AUC  | Gini | KS   | Brier |
+|--------------------|------|------|------|-------|
+| Scorecard (champ.) |      |      |      |       |
+| Challenger (LGBM)  |      |      |      |       |
+| Reduced scorecard  |      |      |      |       |
+
+<span class="cmt">## Decision</span>
+
+- Profit-maximising approval rate:
+- Cutoff PD at that point:
+- Shape near the peak (flat or sharp?):
+
+<span class="cmt">## Stability</span>
+
+- MODEL_SCORE PSI:            (verdict:            )
+- Features above 0.25:
+- Interpretation:
+
+<span class="cmt">## Swap sets vs incumbent (rate-rank proxy)</span>
+
+- Bad-rate improvement at 65% approval:      pp
+
+<span class="cmt">## Reject inference</span>
+
+- Through-the-door rate at penalty 1.5:
+- Understatement ratio range across 1.0–2.0:
+
+<span class="cmt">## Text-to-SQL benchmark</span>
+
+- Execution accuracy:      / 25
+- All three refusal cases handled correctly: yes / no</code></pre>
+<p>Then commit it:</p>
+<pre><code>git add RESULTS.md
+git commit -m "Add results summary from full pipeline run"
+git push</code></pre>
+<div class="note iv">
+<span class="note-label">Why this beats committing the CSVs</span>
+<p>An interviewer will not open your <code>cutoff_sweep_challenger.csv</code> and read 116 rows. They will read a one-page summary that shows you understand what your own numbers mean. And it keeps the reproducibility discipline intact, so you can still defend that design choice when asked.</p>
+</div>
+</div>
+</div>
+
+<div class="step">
+<div class="step-n">06</div>
+<div class="step-b">
+<h3>Optional: commit the figures</h3>
+<p>If you want the three PNGs visible on GitHub — they do look good in a README — this is the one exception I'd make, because charts communicate instantly where a CSV doesn't:</p>
+<pre><code>git add -f results/figures/profit_frontier.png \
+          results/figures/calibration.png \
+          results/figures/shap_summary.png
+git commit -m "Add generated figures for documentation"
+git push</code></pre>
+<p>The <code>-f</code> forces past <code>.gitignore</code>. Three PNGs is a defensible exception; a few hundred CSVs is not.</p>
+</div>
+</div>
+
+<div class="note warn">
+<span class="note-label">If you decide you do want everything committed</span>
+<p>It's your repository and your call. The command would be <code>git add -f results/</code>. Just know that you'd be trading away the reproducibility argument, and check the total size first with <code>du -sh results/</code> — GitHub warns above 50 MB per file and rejects above 100 MB. Never force-add <code>data/</code> or <code>models/</code>; those are genuinely too large and <code>.pkl</code> files can carry security concerns.</p>
+</div>
+
+</section>
+
+<!-- ============================================ -->
+<section id="trouble">
+<div class="h2-rule"><span class="h2-num">14</span><h2>If something breaks</h2></div>
+
+<h3>The bugs already fixed — and the debugging method</h3>
+
+<p>Worth reading as stories, because the <em>method</em> matters more than the fixes. These are also good interview material: being able to describe how you cornered a silent hang says more than any feature you built.</p>
+
+<div class="term">
+<p class="term-name">1 · optbinning capped numpy below 2</p>
+<p>The pins asked for <code>numpy==2.1.3</code>, but <code>optbinning==0.19.0</code> declares <code>numpy&lt;2</code>. Unsatisfiable, and <code>pip</code> said so plainly. Fixed by moving to <code>optbinning==0.20.1</code>, which drops the cap.</p>
+</div>
+
+<div class="term">
+<p class="term-name">2 · dbt wrote tables to the wrong schema</p>
+<p><code>make analysis</code> failed with <code>Table with name fct_loan does not exist — did you mean "main_marts.fct_loan"?</code> dbt's default <code>generate_schema_name</code> <em>concatenates</em> the target schema with the custom one, so <code>+schema: marts</code> became <code>main_marts</code>, while every query in the project addresses <code>marts</code> directly.</p>
+<p>Fixed with a <code>generate_schema_name</code> macro that uses the custom name verbatim — one 12-line macro, rather than editing the 11 files that reference <code>marts.</code></p>
+</div>
+
+<div class="term">
+<p class="term-name">3 · The two-hour silent hang — the instructive one</p>
+<p><code>make model</code> ran for <strong>1h 55m</strong> with no output and no error. It looked like a slow model fit on 829,355 rows. It was not.</p>
+<p><strong>What gave it away:</strong> the process had used only <strong>47 seconds of CPU</strong> across those two hours, at 1.3% utilisation, holding <strong>4 MB</strong> of memory. A genuine fit on that data would sit near 100% CPU and hundreds of MB. Low CPU with flat, tiny memory means a process that is <em>blocked</em>, not working.</p>
+<p><strong>Three wrong guesses first:</strong> a 51-category variable (tested: 0.3s), a sparse count feature (it did stall, but a time limit "fixed" it in isolation while the full run still hung), and CPU contention from Spotlight indexing the 10 GB download (real, but the hang survived an idle machine).</p>
+<p><strong>What actually settled it:</strong> dumping the Python stack with <code>faulthandler</code> instead of guessing. It pointed straight at <code>ortools/sat/python/cp_model.py in solve</code>. Then one decisive test: a <em>trivial</em> CP-SAT model with <code>max_time_in_seconds = 5.0</code> ran past 180 seconds. The solver was ignoring its own time limit, so no configuration could ever have fixed it.</p>
+<p><strong>The cause:</strong> <code>ortools 9.10</code> is compiled against protobuf 5.26, but pip had installed protobuf 5.29 to satisfy dbt. The native extension loaded without complaint and then wedged inside <code>Solve()</code> — an ABI mismatch that fails by hanging rather than raising, which is the worst possible failure mode. Hence the two environments.</p>
+<p><strong>The transferable lesson:</strong> when something hangs, measure CPU and memory before theorising. Those two numbers distinguish "slow" from "stuck", and a stuck process needs a stack trace, not a faster algorithm.</p>
+</div>
+
+<div class="term">
+<p class="term-name">4 · Every cutoff showed negative profit</p>
+<p>The optimiser reported losses at all 116 cutoffs and picked the tightest one. The cause was in the unit economics, not the sweep: interest, funding cost and loss on default were all charged on the <strong>full principal for the full term</strong>, ignoring that these loans amortise. See the <a href="#pipeline">amortisation note</a> in the decide stage.</p>
+<p><strong>How it was validated:</strong> by back-testing the formula against the seasoned 2012–14 vintages, whose realised cash flow is a fact rather than a projection. With perfect foresight the formula returned −0.23% where reality was +11.33%, which located the error precisely. It now returns +7.56% — conservative, and defensible.</p>
+</div>
+
+<div class="term">
+<p class="term-name">5 · The Gemini model name was dead, and the quota is tiny</p>
+<p>All 25 benchmark cases failed with <code>404 NOT_FOUND</code>: <code>gemini-2.0-flash</code> had been retired, and <code>gemini-2.5-flash</code> turned out to be closed to new users. The installed SDK (<code>google-genai 0.3.0</code>) was too old to even list the available models.</p>
+<p>Then a subtler one: the free tier allows <strong>20 requests per day per model</strong>, and the benchmark needs 25. It could never pass on one model, and my first instinct — adding 4-second pacing — was solving a per-minute problem that did not exist. The quota is counted <em>per model</em>, so the fix was to point the benchmark and the memo at different models.</p>
+<p><strong>The lesson:</strong> a wall of identical API errors is an infrastructure signal, not a measurement. Reading 3/25 as "the agent is bad at SQL" would have been entirely wrong.</p>
+</div>
+
+<h3>Common errors and what they mean</h3>
+
+<div class="tw">
+<table>
+<thead><tr><th>Error</th><th>Cause and fix</th></tr></thead>
+<tbody>
+<tr><td><code>ModuleNotFoundError</code></td><td>The virtual environment isn't active. Run <code>source .venv/bin/activate</code>.</td></tr>
+<tr><td><code>No module named 'src'</code> <em>from Streamlit</em></td><td><code>streamlit run</code> puts <code>app/</code> on the path, not the project root. Use <code>make app</code>, which sets <code>PYTHONPATH</code>.</td></tr>
+<tr><td>A stage hangs with no output</td><td>Check CPU and memory: <code>ps -p &lt;pid&gt; -o %cpu,time,rss</code>. Low CPU with small, flat memory means blocked, not slow — get a stack trace rather than waiting.</td></tr>
+<tr><td><code>Killed: 9</code></td><td>macOS killed it for memory. On 8 GB, stop Streamlit (<code>pkill -f "streamlit run"</code>) before <code>make model</code>.</td></tr>
+<tr><td><code>404 NOT_FOUND</code> on a model</td><td>That Gemini model was retired or is closed to new keys. List current models and update <code>MODEL</code> in <code>rag/text_to_sql.py</code> and <code>rag/model_memo.py</code>.</td></tr>
+<tr><td><code>429 RESOURCE_EXHAUSTED</code> everywhere</td><td>Daily free-tier quota spent (20/model/day). The run's score is meaningless — rerun on a model with unspent quota, or wait for the reset.</td></tr>
+<tr><td><code>503 UNAVAILABLE</code></td><td>Transient model load. Retry; the benchmark already backs off automatically.</td></tr>
+<tr><td><code>Table … does not exist — did you mean "main_marts…"</code></td><td>The <code>generate_schema_name</code> macro is missing from <code>dbt_creditflow/macros/</code>. Restore it and rerun <code>make build</code>.</td></tr>
+<tr><td><code>FileNotFoundError: …creditflow.duckdb</code></td><td>You skipped a stage. Run <code>make ingest &amp;&amp; make build</code>.</td></tr>
+<tr><td><code>…/train.parquet not found</code></td><td><code>make model</code> hasn't run, or its feature-build step failed.</td></tr>
+<tr><td><code>FRED_API_KEY is not set</code></td><td>Missing or malformed <code>.env</code>. No quotes, no spaces around <code>=</code>.</td></tr>
+<tr><td><code>GEMINI_API_KEY is not set</code></td><td>Same, for the Gemini key.</td></tr>
+<tr><td><code>no PDFs found in data/docs</code></td><td>Add the guidance PDFs (step 09).</td></tr>
+<tr><td><code>text extraction produced no usable chunks</code></td><td>Your PDFs are scanned images. Replace with real text PDFs — test by trying to select text.</td></tr>
+<tr><td><code>AssertionError: post-origination columns present</code></td><td>The leakage guard fired. Something upstream widened the feature query. This is the system working — find what changed.</td></tr>
+<tr><td><code>the train split is empty</code></td><td>The mart doesn't cover the expected years. Check <code>make ingest</code> actually loaded all partitions.</td></tr>
+<tr><td><code>429 / quota exceeded</code> from Gemini</td><td>Free-tier rate limit. Wait a minute and rerun; the benchmark is only 25 calls.</td></tr>
+<tr><td>Kaggle <code>403 Forbidden</code></td><td>Accept the dataset terms in a browser first, then retry.</td></tr>
+<tr><td>dbt yanked-version warning</td><td>Expected and harmless. Not an error.</td></tr>
+</tbody>
+</table>
+</div>
+
+<h3>General debugging approach</h3>
+
+<ol>
+<li><strong>Read the error message.</strong> This codebase raises deliberately helpful errors — most name the exact <code>make</code> target or command that fixes the problem.</li>
+<li><strong>Check the venv is active.</strong> Your prompt should show <code>(.venv)</code>.</li>
+<li><strong>Check prerequisites exist.</strong> Each stage needs the previous one's output. <code>ls</code> the expected file.</li>
+<li><strong>Run the stage's script directly</strong> instead of through <code>make</code>, for a cleaner traceback: e.g. <code>python -m src.features.build</code>.</li>
+<li><strong>Run <code>make lint</code></strong> to parse every Python and SQL file — catches syntax errors fast.</li>
+<li><strong>Run <code>make clean</code></strong> to clear dbt's <code>target/</code> and <code>__pycache__</code>. Safe; touches no data or results.</li>
+</ol>
+
+<div class="note iv">
+<span class="note-label">Nothing here is unrecoverable</span>
+<p>Everything in <code>data/</code>, <code>results/</code>, <code>models/</code> and <code>chroma_db/</code> is regenerated from source. If a stage produces something wrong, delete its output and rerun — there's no hidden cached state to fight, which is exactly what the one-output-root discipline buys you.</p>
+</div>
+
+</section>
+
+<footer>
+<p><strong>CreditFlow Field Manual.</strong> Written to be read start to finish once, then used as a reference. The four files in <code>docs/</code> are the project's own reasoning in its own words — read <code>docs/modelling.md</code> and <code>docs/decision-framework.md</code> before any interview, since they contain the arguments you'll be asked to defend.</p>
+<p>The strongest thing you can say about this project is not that the model works. It's that you can say exactly what it assumes, where it's weak, and what you'd check before trusting it.</p>
+</footer>
+
+</main>
+</div>
